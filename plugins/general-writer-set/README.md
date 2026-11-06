@@ -1,6 +1,6 @@
 # general-writer-set
 
-Subagents for general-audience writing, with full writer skills. Part of the `scrum-ai-ecosystem` marketplace. Version 0.1.0.
+Subagents for general-audience writing, with full writer skills. Part of the `scrum-ai-ecosystem` marketplace. Version 0.2.0.
 
 > **Status: templates filled in, not yet used in production.** Each agent has its role, inputs and outputs, guardrails and working templates.
 
