@@ -4,7 +4,14 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 ## Unreleased
 
-Nothing yet.
+### product-owner-set
+- Filled in the agent TODOs: OKR format and roadmap/vision templates (`product-strategist`), sources and theme taxonomy with report template (`market-researcher`), backlog sources, RICE prioritization and proposal template (`backlog-manager`), severity scale and proposal template (`security-architect`), default single-file HTML prototype stack (`prototyping-agent`), wireframe description format (`uiux-designer`). The Claude Design integration stays a TODO.
+
+### tech-writer-set
+- Filled in the agent TODOs: topic card and confidentiality checklist (`tech-content-scout`), article templates and default length and tone (`tech-draft-writer`), pre-publish checklist (`tech-editor-reviewer`), glossary convention (`tech-translator`).
+
+### general-writer-set
+- Filled in the agent TODOs: default templates (`general-drafter`), register presets with example fixes (`editor-reviewer`), name and term list convention (`translator`).
 
 ## developer-set 0.1.0 (2026-11-06)
 

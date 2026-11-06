@@ -16,9 +16,9 @@ The full brief is `docs/claude-code-prompt_scrum-ai-ecosystem.md`. Read it befor
 | Plugin | Status |
 |---|---|
 | `developer-set` | Full build |
-| `product-owner-set` | Scaffold |
-| `tech-writer-set` | Scaffold (writer skills written in full) |
-| `general-writer-set` | Scaffold (writer skills written in full) |
+| `product-owner-set` | Built (templates filled in; Claude Design integration open) |
+| `tech-writer-set` | Built (templates and writer skills written) |
+| `general-writer-set` | Built (templates and writer skills written) |
 
 Target layout: `.claude-plugin/marketplace.json`, `plugins/<name>/` (each with `.claude-plugin/plugin.json`, `agents/`, `skills/`, `commands/`, `hooks/`, `README.md`), `scripts/validate.sh`, `.github/workflows/validate.yml`, `CHANGELOG.md`. Details are in the brief, section 4.
 

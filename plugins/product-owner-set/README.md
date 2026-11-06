@@ -1,8 +1,8 @@
 # product-owner-set
 
-Scaffold subagents for Product Owners. Part of the `scrum-ai-ecosystem` marketplace. Version 0.1.0.
+Subagents for Product Owners. Part of the `scrum-ai-ecosystem` marketplace. Version 0.1.0.
 
-> **Status: scaffold.** Each agent has its role, inputs and outputs, guardrails and TODOs. Templates and integrations listed under TODO in each agent are not built yet.
+> **Status: templates filled in, not yet used in production.** Each agent has its role, inputs and outputs, guardrails and working templates. The only open TODO is the Claude Design integration for `uiux-designer`.
 
 ## Agents
 
@@ -11,7 +11,7 @@ Scaffold subagents for Product Owners. Part of the `scrum-ai-ecosystem` marketpl
 | `product-strategist` | opus | Goals, roadmap, vision. |
 | `market-researcher` | opus | Collects and analyzes customer requests and bug reports from connected sources (read-only). |
 | `security-architect` | opus | Outdated dependencies and vulnerabilities; proposes maintenance, never applies it. |
-| `uiux-designer` | opus | UI/UX flows and review. Claude Design integration is a TODO. |
+| `uiux-designer` | opus | UI/UX flows and review. Claude Design integration is a future TODO. |
 | `prototyping-agent` | opus | Disposable prototypes under `prototypes/`. |
 | `backlog-manager` | opus | Backlog deduplication and reprioritization proposals. |
 

@@ -1,8 +1,8 @@
 # general-writer-set
 
-Scaffold subagents for general-audience writing, with full writer skills. Part of the `scrum-ai-ecosystem` marketplace. Version 0.1.0.
+Subagents for general-audience writing, with full writer skills. Part of the `scrum-ai-ecosystem` marketplace. Version 0.1.0.
 
-> **Status: scaffold.** Each agent has its role, inputs and outputs, guardrails and TODOs. Templates and integrations listed under TODO in each agent are not built yet.
+> **Status: templates filled in, not yet used in production.** Each agent has its role, inputs and outputs, guardrails and working templates.
 
 ## Agents
 

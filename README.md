@@ -2,16 +2,16 @@
 
 A Claude Code plugin marketplace, **`scrum-ai-ecosystem`**: subagents for the roles I work in as Product Owner, Developer, Scrum Master, Writer and more.
 
-> **Status: version 0.1.0.** `developer-set` is fully built. The other three plugins are scaffolds: each agent has its role, inputs and outputs, and guardrails, and the templates and integrations listed under TODO in each agent are not built yet. Tested with Claude Code 2.1.316.
+> **Status: version 0.1.0.** `developer-set` is fully built. The other three plugins have their roles, guardrails, templates and writer skills written, but have not been used in production yet. The only open TODO is the Claude Design integration for `uiux-designer`. Tested with Claude Code 2.1.316.
 
 ## Plugins
 
 | Plugin | For | Agents | Status |
 |---|---|---|---|
 | [`developer-set`](plugins/developer-set/README.md) | Developers and the delivery pipeline | `project-manager`, `system-architect`, `app-developer`, `sre`, `aire`, `qc`, `qa` | Built (0.1.0) |
-| [`product-owner-set`](plugins/product-owner-set/README.md) | Product Owners | `product-strategist`, `market-researcher`, `security-architect`, `uiux-designer`, `prototyping-agent`, `backlog-manager` | Scaffold (0.1.0) |
-| [`tech-writer-set`](plugins/tech-writer-set/README.md) | Technical articles and blog posts | `tech-content-scout`, `tech-draft-writer`, `tech-translator`, `tech-editor-reviewer` | Scaffold (0.1.0) |
-| [`general-writer-set`](plugins/general-writer-set/README.md) | General-audience writing | `general-drafter`, `translator`, `editor-reviewer` | Scaffold (0.1.0) |
+| [`product-owner-set`](plugins/product-owner-set/README.md) | Product Owners | `product-strategist`, `market-researcher`, `security-architect`, `uiux-designer`, `prototyping-agent`, `backlog-manager` | 0.1.0 (templates filled in) |
+| [`tech-writer-set`](plugins/tech-writer-set/README.md) | Technical articles and blog posts | `tech-content-scout`, `tech-draft-writer`, `tech-translator`, `tech-editor-reviewer` | 0.1.0 (templates filled in) |
+| [`general-writer-set`](plugins/general-writer-set/README.md) | General-audience writing | `general-drafter`, `translator`, `editor-reviewer` | 0.1.0 (templates filled in) |
 
 Each plugin is self-contained: install only what you need, or all four together. Names do not collide. `developer-set` also ships three commands: `/developer-set:sprint-plan`, `/developer-set:design-review` and `/developer-set:release-check`.
 
@@ -90,7 +90,6 @@ A marketplace added from a local path loads each plugin's current source in plac
 - Team performance analysis
 - Issue patrol
 - Claude Design integration for `uiux-designer`
-- Fill in the TODOs of the three scaffold plugins
 
 ## Repository docs
 
