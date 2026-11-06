@@ -1,6 +1,6 @@
 {
   "name": "tech-writer-set",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Subagents for technical articles: content scouting, drafting, translation and editorial review.",
   "author": {
     "name": "su3-hokkaido"

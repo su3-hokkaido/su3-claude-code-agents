@@ -4,14 +4,29 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 ## Unreleased
 
-### All plugins
+Nothing yet.
+
+## developer-set 0.1.1 (2026-11-06)
+
+### Fixed
+- The guard keeps its dry-run memory in the fixed file `/tmp/developer-set-guard-dry-runs` (one `<session> <key>` line per dry run) instead of a per-session directory.
 - Frontmatter `description` values that contain `: ` are now quoted, so strict YAML parsers read them correctly. `validate.sh` rejects unquoted values with `: ` or ` #`.
 
-### developer-set
-- The guard keeps its dry-run memory in the fixed file `/tmp/developer-set-guard-dry-runs` (one `<session> <key>` line per dry run) instead of a per-session directory.
+## product-owner-set 0.2.1 (2026-11-06)
 
-### product-owner-set
+### Fixed
 - The guard no longer keeps state. An ADR counts as "written now" when it changed in the last 120 minutes; older ADRs cannot be edited.
+- Frontmatter `description` values that contain `: ` are now quoted, so strict YAML parsers read them correctly. `validate.sh` rejects unquoted values with `: ` or ` #`.
+
+## tech-writer-set 0.2.1 (2026-11-06)
+
+### Fixed
+- Frontmatter `description` values that contain `: ` are now quoted, so strict YAML parsers read them correctly. `validate.sh` rejects unquoted values with `: ` or ` #`.
+
+## general-writer-set 0.2.1 (2026-11-06)
+
+### Fixed
+- Frontmatter `description` values that contain `: ` are now quoted, so strict YAML parsers read them correctly. `validate.sh` rejects unquoted values with `: ` or ` #`.
 
 ## product-owner-set 0.2.0 (2026-11-06)
 

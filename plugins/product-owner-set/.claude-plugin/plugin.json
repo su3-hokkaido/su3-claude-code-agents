@@ -1,6 +1,6 @@
 {
   "name": "product-owner-set",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Subagents for Product Owners: strategy, market research, security maintenance, UI/UX, prototyping and backlog management.",
   "author": {
     "name": "su3-hokkaido"
