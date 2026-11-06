@@ -1,6 +1,6 @@
 # developer-set
 
-Subagents, skills and a guardrail hook for the delivery pipeline. Part of the `scrum-ai-ecosystem` marketplace. Version 0.1.1.
+Subagents, skills and a guardrail hook for the delivery pipeline. Part of the `scrum-ai-ecosystem` marketplace. Version 0.1.2.
 
 ## Agents
 

@@ -1,6 +1,6 @@
 # product-owner-set
 
-Subagents for Product Owners. Part of the `scrum-ai-ecosystem` marketplace. Version 0.2.1.
+Subagents for Product Owners. Part of the `scrum-ai-ecosystem` marketplace. Version 0.2.2.
 
 > **Status: templates filled in, not yet used in production.** Each agent has its role, inputs and outputs, guardrails and working templates. The only open TODO is the Claude Design integration for `uiux-designer`.
 
