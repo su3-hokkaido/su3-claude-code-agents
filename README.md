@@ -2,16 +2,16 @@
 
 A Claude Code plugin marketplace, **`scrum-ai-ecosystem`**: subagents for the roles I work in as Product Owner, Developer, Scrum Master, Writer and more.
 
-> **Status: early development.** The repository is being built in phases. Items marked *Planned* do not exist yet.
+> **Status: early development.** All four plugins exist: `developer-set` is built, the other three are scaffolds. Items marked *Planned* do not exist yet.
 
 ## Plugins
 
 | Plugin | For | Agents | Status |
 |---|---|---|---|
-| `developer-set` | Developers and the delivery pipeline | `project-manager`, `system-architect`, `app-developer`, `sre`, `aire`, `qc`, `qa` | Planned (full build) |
-| `product-owner-set` | Product Owners | `product-strategist`, `market-researcher`, `security-architect`, `uiux-designer`, `prototyping-agent`, `backlog-manager` | Planned (scaffold) |
-| `tech-writer-set` | Technical articles and blog posts | `tech-content-scout`, `tech-draft-writer`, `tech-translator`, `tech-editor-reviewer` | Planned (scaffold) |
-| `general-writer-set` | General-audience writing | `general-drafter`, `translator`, `editor-reviewer` | Planned (scaffold) |
+| `developer-set` | Developers and the delivery pipeline | `project-manager`, `system-architect`, `app-developer`, `sre`, `aire`, `qc`, `qa` | Built (v0.1.0) |
+| `product-owner-set` | Product Owners | `product-strategist`, `market-researcher`, `security-architect`, `uiux-designer`, `prototyping-agent`, `backlog-manager` | Scaffold (v0.1.0) |
+| `tech-writer-set` | Technical articles and blog posts | `tech-content-scout`, `tech-draft-writer`, `tech-translator`, `tech-editor-reviewer` | Scaffold (v0.1.0) |
+| `general-writer-set` | General-audience writing | `general-drafter`, `translator`, `editor-reviewer` | Scaffold (v0.1.0) |
 
 Each plugin is self-contained. Install only what you need, or all four together without name collisions.
 
@@ -26,7 +26,7 @@ Each plugin is self-contained. Install only what you need, or all four together 
 
 ## Output language
 
-Agent definitions are written in English, but the language agents reply in is configurable: `auto` (default, follows your input), `en`, `ja`, or any BCP-47 code. Translation agents always output in the requested target language. Project settings take precedence over user settings. *Planned.* The exact mechanism is being verified against the current plugin spec.
+Agent definitions are written in English, but the language agents reply in is configurable through each plugin's `output_language` option: `auto` (default, follows your input), `en`, `ja`, or any BCP-47 code. Translation agents always output in the requested target language. Change it with `/plugin configure <plugin>@scrum-ai-ecosystem`. The option is set per plugin and per user, not per project. *Applies once the agents exist.*
 
 ## Prerequisites
 
@@ -34,13 +34,24 @@ The plugins do not bundle MCP servers. Some agents work better with connectors y
 
 ## Local testing
 
-*Planned.*
+Validate everything (requires `jq`; also runs `claude plugin validate`):
+
+```text
+sh scripts/validate.sh
+```
+
+Load one plugin without installing it:
 
 ```text
 claude --plugin-dir ./plugins/developer-set
 ```
 
-Or add the repository as a local marketplace with `/plugin marketplace add ./`, then `/plugin install`.
+Or add the repository as a local marketplace, then install:
+
+```text
+claude plugin marketplace add ./
+claude plugin install developer-set@scrum-ai-ecosystem
+```
 
 ## Roadmap
 

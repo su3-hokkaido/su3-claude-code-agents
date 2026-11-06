@@ -1,0 +1,16 @@
+{
+  "description": "product-owner-set guardrail: product-owner-set subagents never delete or change tickets and sprints on their own, never apply version changes, and must write an ADR before changing product or backlog documents. Acts only inside product-owner-set subagents.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit|MultiEdit|mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/scripts/guard-po.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

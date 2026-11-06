@@ -1,0 +1,37 @@
+{
+  "name": "scrum-ai-ecosystem",
+  "description": "Subagents for Scrum roles and the development pipeline: developer, product owner, technical writer and general writer sets.",
+  "owner": {
+    "name": "su3-hokkaido"
+  },
+  "plugins": [
+    {
+      "name": "developer-set",
+      "source": "./plugins/developer-set",
+      "description": "Subagents for the delivery pipeline: project management, architecture, development, SRE, AI reliability, QC and QA.",
+      "category": "development",
+      "tags": ["scrum", "developer", "sre", "qa"]
+    },
+    {
+      "name": "product-owner-set",
+      "source": "./plugins/product-owner-set",
+      "description": "Subagents for Product Owners: strategy, market research, security maintenance, UI/UX, prototyping and backlog management.",
+      "category": "productivity",
+      "tags": ["scrum", "product-owner", "backlog"]
+    },
+    {
+      "name": "tech-writer-set",
+      "source": "./plugins/tech-writer-set",
+      "description": "Subagents for technical articles: content scouting, drafting, translation and editorial review.",
+      "category": "writing",
+      "tags": ["writing", "technical", "translation"]
+    },
+    {
+      "name": "general-writer-set",
+      "source": "./plugins/general-writer-set",
+      "description": "Subagents for general-audience writing: drafting, translation and editorial review.",
+      "category": "writing",
+      "tags": ["writing", "translation", "editing"]
+    }
+  ]
+}
