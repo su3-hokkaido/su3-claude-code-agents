@@ -6,7 +6,7 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 Nothing yet.
 
-## developer-set 0.1.0 (unreleased)
+## developer-set 0.1.0 (2026-11-06)
 
 ### Added
 - Seven agents: `project-manager`, `system-architect`, `app-developer`, `sre`, `aire`, `qc`, `qa`, each with least-privilege tools and a guardrails section.
@@ -15,7 +15,7 @@ Nothing yet.
 - `PreToolUse` Bash guard hook, active only inside developer-set subagents: data changes need a dry-run first, live infrastructure changes and version upgrades ask the user, other irreversible commands ask the user.
 - `output_language` and `allow_concurrency` options.
 
-## product-owner-set 0.1.0 (unreleased)
+## product-owner-set 0.1.0 (2026-11-06)
 
 ### Added
 - Scaffold of six agents: `product-strategist`, `market-researcher`, `security-architect`, `uiux-designer`, `prototyping-agent`, `backlog-manager`. Each has its role, inputs and outputs, guardrails and TODOs.
@@ -23,14 +23,14 @@ Nothing yet.
 - `PreToolUse` guard hook, active only inside product-owner-set subagents: no ticket or sprint changes by agents (deletes and sprint writes are denied, other connector writes ask), no version changes, an ADR is required before product or backlog documents change, and ADRs are append-only.
 - `output_language` option.
 
-## tech-writer-set 0.1.0 (unreleased)
+## tech-writer-set 0.1.0 (2026-11-06)
 
 ### Added
 - Scaffold of four agents: `tech-content-scout`, `tech-draft-writer`, `tech-translator`, `tech-editor-reviewer`.
 - Complete skills: `tech-translation-guidelines`, `tech-editorial-review`. Also `set-language`.
 - `output_language` option.
 
-## general-writer-set 0.1.0 (unreleased)
+## general-writer-set 0.1.0 (2026-11-06)
 
 ### Added
 - Scaffold of three agents: `general-drafter`, `translator`, `editor-reviewer`.
