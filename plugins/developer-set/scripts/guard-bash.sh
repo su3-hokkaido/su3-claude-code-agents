@@ -5,17 +5,17 @@
 # infrastructure on its own, and never applies version upgrades without a human.
 #
 #   A. Data changes (SQL writes, migrations, data patches, bulk deletes)
-#        - dry-run form (--dry-run, --check, SQL wrapped in ROLLBACK, ...) -> allowed
+#        - dry-run form (--dry-run, --check, SQL wrapped in ROLLBACK, and similar) -> allowed
 #        - real run with no matching dry-run earlier in this session   -> DENIED
 #          (the agent must run the dry-run first and show the result)
 #        - real run after a matching dry-run                            -> ASK the human
 #   B. Live infrastructure changes (terraform apply, kubectl apply, helm
 #      upgrade, cloud deletes, deploys)
 #        - dry-run / plan form -> allowed;  real run -> ASK the human
-#   C. Version upgrades (npm update, pip install -U, apt upgrade, ...)
+#   C. Version upgrades (npm update, pip install -U, apt upgrade, and similar)
 #        - dry-run form -> allowed;  real run -> ASK the human
 #   D. Other irreversible commands (force push, reset --hard, broad rm -rf,
-#      pipe to shell, sudo, publish/release, ...) -> ASK the human
+#      pipe to shell, sudo, publish/release, and similar) -> ASK the human
 #
 # "ASK" shows a permission prompt; in non-interactive runs it counts as a
 # denial. Tools with no dry-run mode can never pass rule A: the Commander must
@@ -24,7 +24,7 @@
 # Dry runs are remembered as "<session> <key>" lines in the fixed file
 # /tmp/developer-set-guard-dry-runs (a dry run in one session never unlocks another).
 #
-# Acts only inside developer-set subagents (agent_type "developer-set:..."), so
+# Acts only inside developer-set subagents (agent_type starting with "developer-set:"), so
 # it never changes how the Commander works in the main session.
 # This is a text-pattern safety net, not a security boundary: a reworded
 # command can slip past it. Needs no jq. POSIX sh; macOS and Linux.
@@ -62,7 +62,7 @@ ask() {
 }
 
 deny() {
-  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"developer-set guard: '"$1"''"$PROD"'. Run it first in dry-run form (for example --dry-run, or SQL wrapped in BEGIN ... ROLLBACK), show the Commander the result, then try again. If the tool has no dry-run mode, ask the Commander to run it themselves."}}'
+  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"developer-set guard: '"$1"''"$PROD"'. Run it first in dry-run form (for example --dry-run, or SQL wrapped in BEGIN and ROLLBACK), show the Commander the result, then try again. If the tool has no dry-run mode, ask the Commander to run it themselves."}}'
   exit 0
 }
 
@@ -123,7 +123,7 @@ check() {
 check "force push" 'git[[:space:]]+push[^"|;&]*([[:space:]]--force|[[:space:]]-[a-zA-Z]*f([[:space:]"]|$))'
 check "git reset --hard" 'git[[:space:]]+reset[[:space:]]+[^"|;&]*--hard'
 check "git clean -f" 'git[[:space:]]+clean[[:space:]]+-[a-zA-Z]*f'
-check "recursive delete of a broad path" 'rm[[:space:]]+(-[a-zA-Z]+[[:space:]]+)+(/|~|\\\$HOME|\$HOME|\*|\.|\.\.)(/?)([[:space:]"]|$)'
+check "recursive delete of a broad path" 'rm[[:space:]]+(-[a-zA-Z]+[[:space:]]+)+(/|~|\\\$HOME|\$HOME|\*|\.{1,2})(/?)([[:space:]"]|$)'
 check "pipe to shell" '(curl|wg[e]t)[^"|;&]*\|[[:space:]]*(sudo[[:space:]]+)?(sh|bash|zsh)'
 check "world-writable permissions" 'chmod[[:space:]]+(-[a-zA-Z]+[[:space:]]+)*0?777'
 check "sudo" '(^|[^a-zA-Z])sudo[[:space:]]'

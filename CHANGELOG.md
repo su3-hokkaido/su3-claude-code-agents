@@ -6,6 +6,11 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 Nothing yet.
 
+## developer-set 0.1.3 (2026-11-06)
+
+### Fixed
+- `guard-bash.sh` no longer contains the text `..` (comments and one message said `...`, and the broad-delete pattern spelled `\.\.`), because the directory scan read it as a path that leaves the plugin. The pattern is now `\.{1,2}`; behavior is unchanged and covered by new tests.
+
 ## developer-set 0.1.2 (2026-11-06)
 
 ### Fixed

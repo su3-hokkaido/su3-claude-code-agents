@@ -2,13 +2,13 @@
 
 A Claude Code plugin marketplace, **`scrum-ai-ecosystem`**: subagents for the roles I work in as Product Owner, Developer, Scrum Master, Writer and more.
 
-> **Status: for personal use, not yet proven in production.** `developer-set` (0.1.2) is fully built. The other three plugins have their roles, guardrails, templates and writer skills written. The only open TODO is the Claude Design integration for `uiux-designer`. Tested with Claude Code 2.1.316.
+> **Status: for personal use, not yet proven in production.** `developer-set` (0.1.3) is fully built. The other three plugins have their roles, guardrails, templates and writer skills written. The only open TODO is the Claude Design integration for `uiux-designer`. Tested with Claude Code 2.1.316.
 
 ## Plugins
 
 | Plugin | For | Agents | Status |
 |---|---|---|---|
-| [`developer-set`](plugins/developer-set/README.md) | Developers and the delivery pipeline | `project-manager`, `system-architect`, `app-developer`, `sre`, `aire`, `qc`, `qa` | Built (0.1.2) |
+| [`developer-set`](plugins/developer-set/README.md) | Developers and the delivery pipeline | `project-manager`, `system-architect`, `app-developer`, `sre`, `aire`, `qc`, `qa` | Built (0.1.3) |
 | [`product-owner-set`](plugins/product-owner-set/README.md) | Product Owners | `product-strategist`, `market-researcher`, `security-architect`, `uiux-designer`, `prototyping-agent`, `backlog-manager` | 0.2.2 |
 | [`tech-writer-set`](plugins/tech-writer-set/README.md) | Technical articles and blog posts | `tech-content-scout`, `tech-draft-writer`, `tech-translator`, `tech-editor-reviewer` | 0.2.1 |
 | [`general-writer-set`](plugins/general-writer-set/README.md) | General-audience writing | `general-drafter`, `translator`, `editor-reviewer` | 0.2.1 |
