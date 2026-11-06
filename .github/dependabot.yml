@@ -1,0 +1,30 @@
+# Keeps the SHA-pinned actions and npm dependencies current. Pull requests target the default
+# branch (main).
+#
+# The npm entry fails with "directory not found" in the Dependabot tab until a package.json exists.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # Lets a compromised release be noticed and pulled before it is proposed.
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ci
+    groups:
+      github-actions:
+        patterns: ['*']
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: deps
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]

@@ -1,0 +1,30 @@
+name: Bug report
+description: An agent, skill or hook behaves incorrectly.
+labels: [bug]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: The agent name, the input given, and the steps.
+      placeholder: |
+        1. Run the `xxx` agent with ...
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Commit or version
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Claude Code version, model, OS, and relevant MCP servers or settings.

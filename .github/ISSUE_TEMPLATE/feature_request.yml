@@ -1,0 +1,22 @@
+name: Feature request
+description: A new agent, skill or improvement to an existing one.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: The role or task you want covered and why the current agents do not cover it.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: The agent or change you suggest, including its role (Product Owner, Developer, Scrum Master, Writer, ...), inputs and outputs.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
