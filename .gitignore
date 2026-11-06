@@ -36,6 +36,7 @@ go.work.sum
 .claude/settings.local.json
 .claude/*.local.md
 *.local.md
+README*.md
 
 # OS / editor
 .DS_Store
