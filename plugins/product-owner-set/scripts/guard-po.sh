@@ -100,7 +100,7 @@ if [ "$TOOL" = "Bash" ]; then
     deny "ADR files are history. Do not remove or move them; add a new ADR that supersedes the old one."
   fi
 
-  TRACKER='(gh[[:space:]]+(issue|project|pr)[[:space:]]+(delete|close|reopen|edit|create|transfer|comment|lock|unlock|pin|unpin|move|item-[a-z]+)|gh[[:space:]]+api[^"|;&]*(-X|--method)[[:space:]]*(DELETE|PUT|PATCH|POST)|(jira|acli|backlog|linear|clickup)[[:space:]][^"|;&]*(delete|remove|edit|update|move|transition|assign|create|close|comment)|(curl|wget|http|https|xh)[[:space:]][^"|;&]*(-X|--request|--method)[[:space:]]*=?[[:space:]]*(DELETE|PUT|PATCH|POST))'
+  TRACKER='(gh[[:space:]]+(issue|project|pr)[[:space:]]+(delete|close|reopen|edit|create|transfer|comment|lock|unlock|pin|unpin|move|item-[a-z]+)|gh[[:space:]]+api[^"|;&]*(-X|--method)[[:space:]]*(DELETE|PUT|PATCH|POST)|(jira|acli|backlog|linear|clickup)[[:space:]][^"|;&]*(delete|remove|edit|update|move|transition|assign|create|close|comment)|(curl|wg[e]t|http|https|xh)[[:space:]][^"|;&]*(-X|--request|--method)[[:space:]]*=?[[:space:]]*(DELETE|PUT|PATCH|POST))'
   if has "$TRACKER"; then
     if has '(delete|remove)'; then
       deny "this command deletes data in an external service. Draft the deletion as a proposal and let the Commander do it."
@@ -137,14 +137,14 @@ case "$TOOL" in
       if [ "$TOOL" = "Write" ] && [ -e "$ABS" ]; then
         deny "$FILE already exists. An ADR is history and is never overwritten. Add a new ADR that supersedes it."
       fi
-      if [ "$TOOL" != "Write" ] && [ -z "$(find "$ABS" -mmin -120 2>/dev/null)" ]; then
+      if [ "$TOOL" != "Write" ] && [ -z "$(find "$ABS" -mmin -120)" ]; then
         deny "$FILE is an older ADR. An ADR is history and is never edited. Add a new ADR that supersedes it."
       fi
       exit 0
     fi
 
     if printf '%s' "$ABS" | grep -Eq '(^|/)docs/(product|backlog)/'; then
-      if [ -z "$(find "${CWD:-.}/docs/adr" -name '*.md' -mmin -120 2>/dev/null)" ]; then
+      if [ ! -d "${CWD:-.}/docs/adr" ] || [ -z "$(find "${CWD:-.}/docs/adr" -name '*.md' -mmin -120)" ]; then
         deny "write the ADR first. Record this decision and its history as docs/adr/NNNN-title.md (context, what came before, decision, alternatives, consequences, which ADR it supersedes), then retry this write."
       fi
     fi

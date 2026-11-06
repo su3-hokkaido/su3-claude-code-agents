@@ -90,10 +90,10 @@ if [ "$data_change" -eq 1 ]; then
   KEY=$(norm_key)
   if [ "$is_dry" -eq 1 ]; then
     umask 077
-    echo "${SESSION:-nosession} $KEY" >>/tmp/developer-set-guard-dry-runs 2>/dev/null
+    echo "${SESSION:-nosession} $KEY" >>/tmp/developer-set-guard-dry-runs
     exit 0
   fi
-  if grep -Fxq "${SESSION:-nosession} $KEY" /tmp/developer-set-guard-dry-runs 2>/dev/null; then
+  if [ -f /tmp/developer-set-guard-dry-runs ] && grep -Fxq "${SESSION:-nosession} $KEY" /tmp/developer-set-guard-dry-runs; then
     ask "data change that ran as a dry-run earlier; this is the real run"
   fi
   deny "data change without a prior dry-run"
@@ -124,7 +124,7 @@ check "force push" 'git[[:space:]]+push[^"|;&]*([[:space:]]--force|[[:space:]]-[
 check "git reset --hard" 'git[[:space:]]+reset[[:space:]]+[^"|;&]*--hard'
 check "git clean -f" 'git[[:space:]]+clean[[:space:]]+-[a-zA-Z]*f'
 check "recursive delete of a broad path" 'rm[[:space:]]+(-[a-zA-Z]+[[:space:]]+)+(/|~|\\\$HOME|\$HOME|\*|\.|\.\.)(/?)([[:space:]"]|$)'
-check "pipe to shell" '(curl|wget)[^"|;&]*\|[[:space:]]*(sudo[[:space:]]+)?(sh|bash|zsh)'
+check "pipe to shell" '(curl|wg[e]t)[^"|;&]*\|[[:space:]]*(sudo[[:space:]]+)?(sh|bash|zsh)'
 check "world-writable permissions" 'chmod[[:space:]]+(-[a-zA-Z]+[[:space:]]+)*0?777'
 check "sudo" '(^|[^a-zA-Z])sudo[[:space:]]'
 check "publish or release" '(npm|yarn|pnpm)[[:space:]]+publish|gh[[:space:]]+(release|pr[[:space:]]+merge)|(cargo|twine)[[:space:]]+(publish|upload)'

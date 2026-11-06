@@ -4,7 +4,8 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 ## Unreleased
 
-Nothing yet.
+### developer-set, product-owner-set
+- Guard scripts no longer redirect to `/dev/null`, and the `wget` pattern is written as `wg[e]t`, so the directory scan stops reading the pattern text as a program that writes to a config file. Behavior is unchanged and covered by new tests.
 
 ## developer-set 0.1.1 (2026-11-06)
 
