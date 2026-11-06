@@ -1,7 +1,5 @@
 # su3-claude-code-agents
 
-[日本語](README.ja.md)
-
 A Claude Code plugin marketplace, **`scrum-ai-ecosystem`**: subagents for the roles I work in as Product Owner, Developer, Scrum Master, Writer and more.
 
 > **Status: version 0.1.0.** `developer-set` is fully built. The other three plugins are scaffolds: each agent has its role, inputs and outputs, and guardrails, and the templates and integrations listed under TODO in each agent are not built yet. Tested with Claude Code 2.1.316.
