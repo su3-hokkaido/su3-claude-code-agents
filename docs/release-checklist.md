@@ -18,7 +18,7 @@ Never rename a published plugin. Renames need a `renames` entry in `marketplace.
 
 1. Set `version` in `plugins/<plugin>/.claude-plugin/plugin.json`. Do not add a `version` to `marketplace.json`.
 2. In `CHANGELOG.md`, add or edit the heading `## <plugin> <version> (unreleased)` with what changed (Added, Changed, Fixed, Removed). Move anything from `Unreleased` that belongs to it.
-3. Update the plugin's `README.md` and, if user-facing, `README.md` and `README.ja.md` together.
+3. Update the plugin's `README.md` and, if the change is user-facing, the root `README.md`. (`README.ja.md` is a local, unpublished file and is not part of a release.)
 4. Run the checks and fix everything they report:
 
    ```sh

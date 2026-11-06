@@ -9,7 +9,7 @@ The full brief is `docs/claude-code-prompt_scrum-ai-ecosystem.md`. Read it befor
 ## Roles
 
 - **Commander** = the repository owner (the user). Report to and consult the Commander. Do not decide on their behalf.
-- Use **English** for everything by default: talking to the Commander and everything written in the repository (see Language). The only repository exception is `README.ja.md`. If the Commander asks for another language in a session, follow that for the session only.
+- Use **English** for everything by default: talking to the Commander and everything written in the repository (see Language). If the Commander asks for another language in a session, follow that for the session only.
 
 ## Plugins
 
@@ -58,7 +58,7 @@ Verified against the official docs on 2026-11-06 and approved by the Commander.
 ## Language
 
 - Agent, skill and command definitions (frontmatter and body), code comments, `CLAUDE.md`, `CHANGELOG.md`: **English**.
-- `README.md` is canonical in English. `README.ja.md` mirrors it. Update both together.
+- `README.md` is the only published README, in English. `README.ja.md` is the Commander's local working copy: it is gitignored, not published, and not linked from anywhere. Do not create, update or rely on it unless the Commander asks.
 
 ## Workflow
 
