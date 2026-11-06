@@ -1,6 +1,6 @@
 ---
 name: tech-translation-guidelines
-description: Guidelines for translating technical text between Japanese and English: technical accuracy, terminology consistency, code and identifier preservation. Use when translating or reviewing a technical article, documentation or README between Japanese and English.
+description: "Guidelines for translating technical text between Japanese and English: technical accuracy, terminology consistency, code and identifier preservation. Use when translating or reviewing a technical article, documentation or README between Japanese and English."
 ---
 
 # Technical translation guidelines

@@ -37,8 +37,8 @@ Agents here only read, analyze and draft. They never post to or edit external se
 | Bash | `gh issue/project`, `gh api -X ...`, `jira`/`acli`, `curl -X POST/PUT/PATCH/DELETE`: same rules as connector tools | Deny or ask |
 | | Version changes: `npm update`, `npm audit fix`, `pip install -U`, `cargo update`, `apt upgrade`, `--fix`, `--force` | **Denied**. These agents only propose them. |
 | | Installing packages | **Asks** you |
-| Decision records | A write under `docs/product/` or `docs/backlog/` before this session has written an ADR under `docs/adr/` | **Denied** |
-| | Overwriting or editing an ADR from before this session, and removing or moving ADR files | **Denied**. Add a new ADR that supersedes it. |
+| Decision records | A write under `docs/product/` or `docs/backlog/` unless an ADR under `docs/adr/` was written in the last 120 minutes (judged by file modification time; the hook keeps no state) | **Denied** |
+| | Overwriting or editing an ADR older than 120 minutes, and removing or moving ADR files | **Denied**. Add a new ADR that supersedes it. |
 
 Notes:
 

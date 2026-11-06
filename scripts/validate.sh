@@ -198,6 +198,21 @@ info "== Agents and skills"
 NAMES="$TMP/names"
 : >"$NAMES"
 
+# Frontmatter values that contain ": " or " #" must be quoted, or strict YAML
+# parsers (such as the directory validator) reject or truncate them.
+for f in plugins/*/agents/*.md plugins/*/skills/*/SKILL.md; do
+  [ -f "$f" ] || continue
+  bad=$(awk '
+    NR == 1 { if ($0 != "---") exit; infm = 1; next }
+    infm && $0 == "---" { exit }
+    infm && /^[A-Za-z][A-Za-z0-9_-]*:[ \t]+/ {
+      v = $0; sub(/^[A-Za-z][A-Za-z0-9_-]*:[ \t]+/, "", v)
+      if (v !~ /^["\x27>|\[{]/ && (v ~ /: / || v ~ / #/ || v ~ /:$/)) { print NR; exit }
+    }
+  ' "$f")
+  [ -z "$bad" ] || err "$f: line $bad of the frontmatter has an unquoted value containing ': ' or ' #'; put the whole value in double quotes"
+done
+
 for f in plugins/*/agents/*.md; do
   [ -f "$f" ] || continue
   p=$(echo "$f" | cut -d/ -f2)

@@ -4,7 +4,14 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 ## Unreleased
 
-Nothing yet.
+### All plugins
+- Frontmatter `description` values that contain `: ` are now quoted, so strict YAML parsers read them correctly. `validate.sh` rejects unquoted values with `: ` or ` #`.
+
+### developer-set
+- The guard keeps its dry-run memory in the fixed file `/tmp/developer-set-guard-dry-runs` (one `<session> <key>` line per dry run) instead of a per-session directory.
+
+### product-owner-set
+- The guard no longer keeps state. An ADR counts as "written now" when it changed in the last 120 minutes; older ADRs cannot be edited.
 
 ## product-owner-set 0.2.0 (2026-11-06)
 

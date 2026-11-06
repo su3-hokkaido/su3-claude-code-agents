@@ -40,7 +40,7 @@ Concurrency is optional and off by default. Add `--parallel` to a run, or set `a
 
 | Class | Examples | Result |
 |---|---|---|
-| Data changes | SQL writes through `psql`/`mysql`/..., `rails db:migrate`, `prisma migrate`, `alembic upgrade`, backfill and data-patch scripts, `aws s3 rm`, DynamoDB writes | Dry-run form (`--dry-run`, `--check`, or SQL ending in `ROLLBACK;`) is allowed and remembered for the session. The real command without an earlier matching dry-run is **denied**. After one, it **asks** you. Tools with no dry-run mode can only be run by you. |
+| Data changes | SQL writes through `psql`/`mysql`/..., `rails db:migrate`, `prisma migrate`, `alembic upgrade`, backfill and data-patch scripts, `aws s3 rm`, DynamoDB writes | Dry-run form (`--dry-run`, `--check`, or SQL ending in `ROLLBACK;`) is allowed and remembered for the session (in `/tmp/developer-set-guard-dry-runs`). The real command without an earlier matching dry-run is **denied**. After one, it **asks** you. Tools with no dry-run mode can only be run by you. |
 | Live infrastructure | `terraform apply/destroy`, `kubectl apply/delete`, `helm upgrade`, `pulumi up`, `ansible-playbook`, cloud deletes, deploy commands | Plan and dry-run forms are allowed. The real command **asks** you. |
 | Version upgrades | `npm update`, `npm audit fix`, `pip install -U`, `cargo update`, `apt upgrade`, `brew upgrade` | Dry-run forms are allowed. The real command **asks** you, because it may be a minor or major change. |
 | Other irreversible | force push, `git reset --hard`, broad `rm -rf`, pipe to shell, `chmod 777`, `sudo`, publish and release | **Asks** you. |

@@ -5,7 +5,7 @@ description: How to record a product decision as an ADR (architecture decision r
 
 # Product ADR
 
-Product decisions and their history must outlive the conversation. Before you write or change anything under `docs/product/` or `docs/backlog/`, write an ADR. The plugin's guard hook blocks those writes until this session has written one.
+Product decisions and their history must outlive the conversation. Before you write or change anything under `docs/product/` or `docs/backlog/`, write an ADR. The plugin's guard hook blocks those writes unless an ADR was written in the last 120 minutes.
 
 ## Where
 

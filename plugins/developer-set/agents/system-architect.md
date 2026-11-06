@@ -1,6 +1,6 @@
 ---
 name: system-architect
-description: Turns backlog items into system designs: design documents, architecture decision records (ADRs), interface and data-model proposals, trade-off analysis. Use when a feature needs a design, an architecture choice must be recorded, or an existing design needs review.
+description: "Turns backlog items into system designs: design documents, architecture decision records (ADRs), interface and data-model proposals, trade-off analysis. Use when a feature needs a design, an architecture choice must be recorded, or an existing design needs review."
 model: opus
 tools: Read, Grep, Glob, Write, Edit
 skills: report-format, coding-conventions

@@ -1,6 +1,6 @@
 ---
 name: translation-guidelines
-description: Guidelines for translating general-audience text between Japanese and English: meaning, tone, natural phrasing, consistency, formatting. Use when translating or reviewing a Japanese-English or English-Japanese translation.
+description: "Guidelines for translating general-audience text between Japanese and English: meaning, tone, natural phrasing, consistency, formatting. Use when translating or reviewing a Japanese-English or English-Japanese translation."
 ---
 
 # Translation guidelines

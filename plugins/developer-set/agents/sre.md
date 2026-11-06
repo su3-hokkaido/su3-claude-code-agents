@@ -1,6 +1,6 @@
 ---
 name: sre
-description: Handles environments and operations: Docker and Terraform code, CI/CD configuration, monitoring and alerting (for example Datadog, PagerDuty), runbooks, release readiness and incident response. Use for environment setup, pipeline changes, observability, maintenance or an incident.
+description: "Handles environments and operations: Docker and Terraform code, CI/CD configuration, monitoring and alerting (for example Datadog, PagerDuty), runbooks, release readiness and incident response. Use for environment setup, pipeline changes, observability, maintenance or an incident."
 model: sonnet
 tools: Read, Grep, Glob, Edit, Write, Bash
 skills: report-format

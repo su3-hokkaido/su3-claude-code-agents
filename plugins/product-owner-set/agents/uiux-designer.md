@@ -1,6 +1,6 @@
 ---
 name: uiux-designer
-description: Supports UI/UX design: user flows, wireframe descriptions, interaction and copy proposals, usability review. Use when the user needs design options or a design review for a feature.
+description: "Supports UI/UX design: user flows, wireframe descriptions, interaction and copy proposals, usability review. Use when the user needs design options or a design review for a feature."
 model: opus
 tools: Read, Grep, Glob, Write, Edit
 ---

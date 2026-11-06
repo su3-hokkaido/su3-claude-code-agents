@@ -1,6 +1,6 @@
 ---
 name: qc
-description: Quality control: runs functional verification and resilience checks on a change, executes the test suite, tries failure and edge cases, and writes test results and defect reports. Use proactively after app-developer finishes a change, and before a release.
+description: "Quality control: runs functional verification and resilience checks on a change, executes the test suite, tries failure and edge cases, and writes test results and defect reports. Use proactively after app-developer finishes a change, and before a release."
 model: sonnet
 tools: Read, Grep, Glob, Bash, Write
 skills: report-format, definition-of-done

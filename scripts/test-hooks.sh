@@ -11,7 +11,9 @@ FAILS=0
 # Marker files of the guard go to a private temp dir.
 TMPDIR=$(mktemp -d)
 export TMPDIR
-trap 'rm -r "$TMPDIR"' EXIT INT TERM
+trap 'rm -r "$TMPDIR"; rm -f /tmp/developer-set-guard-dry-runs' EXIT INT TERM
+# The developer-set guard keeps its dry-run memory in this fixed file.
+rm -f /tmp/developer-set-guard-dry-runs
 
 fail() {
   echo "FAIL: $*" >&2
@@ -178,6 +180,7 @@ po $P "$PO" Bash '{"command":"ls docs/adr"}' none
 ADRDIR="$TMPDIR/proj"
 mkdir -p "$ADRDIR/docs/adr"
 : >"$ADRDIR/docs/adr/0001-old.md"
+touch -t 202001010000 "$ADRDIR/docs/adr/0001-old.md"
 S2="p-adr"
 po $S2 "$PO" Write '{"file_path":"docs/product/roadmap.md","content":"x"}' deny "$ADRDIR"
 po $S2 "$PO" Edit '{"file_path":"docs/backlog/proposal.md"}' deny "$ADRDIR"
@@ -185,15 +188,20 @@ po $S2 "$PO" Write '{"file_path":"docs/research/themes.md","content":"x"}' none 
 po $S2 "$PO" Write '{"file_path":"docs/adr/0001-old.md","content":"x"}' deny "$ADRDIR"
 po $S2 "$PO" Edit '{"file_path":"docs/adr/0001-old.md"}' deny "$ADRDIR"
 po $S2 "$PO" Write '{"file_path":"docs/adr/0002-new.md","content":"x"}' none "$ADRDIR"
-# After writing an ADR this session, product and backlog documents are allowed.
+# After writing an ADR (changed within the last 120 minutes), product and
+# backlog documents are allowed.
+: >"$ADRDIR/docs/adr/0002-new.md"
 po $S2 "$PO" Write '{"file_path":"docs/product/roadmap.md","content":"x"}' none "$ADRDIR"
 po $S2 "$PO" Edit '{"file_path":"'"$ADRDIR"'/docs/backlog/proposal.md"}' none "$ADRDIR"
-# The ADR written in this session may still be edited, old ones may not.
-: >"$ADRDIR/docs/adr/0002-new.md"
+# The ADR written just now may still be edited, old ones may not.
 po $S2 "$PO" Edit '{"file_path":"docs/adr/0002-new.md"}' none "$ADRDIR"
 po $S2 "$PO" Edit '{"file_path":"docs/adr/0001-old.md"}' deny "$ADRDIR"
-# Another session has no ADR yet.
-po "p-other" "$PO" Write '{"file_path":"docs/product/roadmap.md","content":"x"}' deny "$ADRDIR"
+# A project whose only ADR is old has no fresh ADR.
+OLDDIR="$TMPDIR/proj-old"
+mkdir -p "$OLDDIR/docs/adr"
+: >"$OLDDIR/docs/adr/0001-old.md"
+touch -t 202001010000 "$OLDDIR/docs/adr/0001-old.md"
+po "p-other" "$PO" Write '{"file_path":"docs/product/roadmap.md","content":"x"}' deny "$OLDDIR"
 
 # Outside product-owner-set agents the hook does nothing.
 po $P "" "${JIRA}deleteJiraIssue" '{}' none

@@ -1,6 +1,6 @@
 ---
 name: qa
-description: Quality assurance: defines quality standards for the whole development process, owns the definition of done, and reviews the process with the project manager and QC. Use when the team needs quality standards, a definition of done, a quality gate decision or a process review.
+description: "Quality assurance: defines quality standards for the whole development process, owns the definition of done, and reviews the process with the project manager and QC. Use when the team needs quality standards, a definition of done, a quality gate decision or a process review."
 model: sonnet
 tools: Read, Grep, Glob, Write, Edit
 skills: report-format, definition-of-done

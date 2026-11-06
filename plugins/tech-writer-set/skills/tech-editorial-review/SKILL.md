@@ -1,6 +1,6 @@
 ---
 name: tech-editorial-review
-description: Editorial review checklist for technical writing: structure, clarity, technical accuracy, terminology consistency, AI slop removal, and a standard review report. Use when reviewing a technical article, documentation or translation.
+description: "Editorial review checklist for technical writing: structure, clarity, technical accuracy, terminology consistency, AI slop removal, and a standard review report. Use when reviewing a technical article, documentation or translation."
 ---
 
 # Technical editorial review

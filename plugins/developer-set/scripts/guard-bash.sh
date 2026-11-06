@@ -21,6 +21,9 @@
 # denial. Tools with no dry-run mode can never pass rule A: the Commander must
 # run them personally.
 #
+# Dry runs are remembered as "<session> <key>" lines in the fixed file
+# /tmp/developer-set-guard-dry-runs (a dry run in one session never unlocks another).
+#
 # Acts only inside developer-set subagents (agent_type "developer-set:..."), so
 # it never changes how the Commander works in the main session.
 # This is a text-pattern safety net, not a security boundary: a reworded
@@ -35,7 +38,6 @@ CMD=$(printf '%s' "$INPUT" | sed -nE 's/.*"command"[[:space:]]*:[[:space:]]*"(([
 [ -n "$CMD" ] || CMD="$INPUT"
 
 SESSION=$(printf '%s' "$INPUT" | sed -nE 's/.*"session_id"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/p' | head -n 1)
-MARKERS="${TMPDIR:-/tmp}/developer-set-guard-${SESSION:-nosession}"
 
 has() {
   printf '%s' "$CMD" | grep -Eiq -- "$1"
@@ -88,10 +90,10 @@ if [ "$data_change" -eq 1 ]; then
   KEY=$(norm_key)
   if [ "$is_dry" -eq 1 ]; then
     umask 077
-    mkdir -p "$MARKERS" 2>/dev/null && : >"$MARKERS/$KEY" 2>/dev/null
+    echo "${SESSION:-nosession} $KEY" >>/tmp/developer-set-guard-dry-runs 2>/dev/null
     exit 0
   fi
-  if [ -f "$MARKERS/$KEY" ]; then
+  if grep -Fxq "${SESSION:-nosession} $KEY" /tmp/developer-set-guard-dry-runs 2>/dev/null; then
     ask "data change that ran as a dry-run earlier; this is the real run"
   fi
   deny "data change without a prior dry-run"

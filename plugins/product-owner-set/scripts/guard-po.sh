@@ -17,7 +17,8 @@
 #      the same rules. Version changes (npm update, --fix, pip install -U ...)
 #      are DENIED: these agents only propose them. Installing packages asks.
 #   3. Decision records: a write to docs/product/ or docs/backlog/ is DENIED
-#      until this session has written an ADR under docs/adr/. An existing ADR
+#      until an ADR under docs/adr/ was written in the last 120 minutes (the
+#      hook keeps no state; it judges by the file's modification time). An older ADR
 #      is history: overwriting or editing it, and removing ADR files, are
 #      DENIED. Record a change as a new ADR that supersedes the old one.
 #
@@ -35,9 +36,7 @@ json_field() {
 }
 
 TOOL=$(json_field tool_name)
-SESSION=$(json_field session_id)
 CWD=$(json_field cwd)
-MARKERS="${TMPDIR:-/tmp}/product-owner-set-guard-${SESSION:-nosession}"
 
 reply() {
   # $1 decision, $2 reason
@@ -138,16 +137,14 @@ case "$TOOL" in
       if [ "$TOOL" = "Write" ] && [ -e "$ABS" ]; then
         deny "$FILE already exists. An ADR is history and is never overwritten. Add a new ADR that supersedes it."
       fi
-      if [ "$TOOL" != "Write" ] && ! grep -Fxq "$ABS" "$MARKERS/adrs" 2>/dev/null; then
-        deny "$FILE is an ADR from before this session. An ADR is history and is never edited. Add a new ADR that supersedes it."
+      if [ "$TOOL" != "Write" ] && [ -z "$(find "$ABS" -mmin -120 2>/dev/null)" ]; then
+        deny "$FILE is an older ADR. An ADR is history and is never edited. Add a new ADR that supersedes it."
       fi
-      umask 077
-      mkdir -p "$MARKERS" 2>/dev/null && printf '%s\n' "$ABS" >>"$MARKERS/adrs"
       exit 0
     fi
 
     if printf '%s' "$ABS" | grep -Eq '(^|/)docs/(product|backlog)/'; then
-      if [ ! -s "$MARKERS/adrs" ]; then
+      if [ -z "$(find "${CWD:-.}/docs/adr" -name '*.md' -mmin -120 2>/dev/null)" ]; then
         deny "write the ADR first. Record this decision and its history as docs/adr/NNNN-title.md (context, what came before, decision, alternatives, consequences, which ADR it supersedes), then retry this write."
       fi
     fi

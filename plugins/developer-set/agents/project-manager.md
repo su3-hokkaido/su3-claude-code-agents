@@ -1,6 +1,6 @@
 ---
 name: project-manager
-description: Coordinates delivery work: breaks a goal or backlog into tasks, assigns them to developer-set agents, plans sprints, tracks progress and writes status reports. Use when the user asks for a sprint plan, task breakdown, assignment, progress check or status report.
+description: "Coordinates delivery work: breaks a goal or backlog into tasks, assigns them to developer-set agents, plans sprints, tracks progress and writes status reports. Use when the user asks for a sprint plan, task breakdown, assignment, progress check or status report."
 model: opus
 tools: Read, Grep, Glob, Write, Edit
 skills: report-format, coding-conventions, definition-of-done

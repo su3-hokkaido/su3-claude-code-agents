@@ -1,6 +1,6 @@
 ---
 name: aire
-description: AI reliability engineer: continuously checks the safety and quality of AI models and agents in every environment from local to production. Produces eval plans and AI risk checklists, and reviews prompts, agent definitions, tool permissions and guardrails. Use when a change adds or modifies an AI feature, prompt, model or agent.
+description: "AI reliability engineer: continuously checks the safety and quality of AI models and agents in every environment from local to production. Produces eval plans and AI risk checklists, and reviews prompts, agent definitions, tool permissions and guardrails. Use when a change adds or modifies an AI feature, prompt, model or agent."
 model: opus
 tools: Read, Grep, Glob, Write, Edit
 skills: report-format, definition-of-done

@@ -1,6 +1,6 @@
 ---
 name: editorial-review
-description: Editorial review checklist for general-audience writing: structure, clarity, polish, Japanese ra-nuki and i-nuki checks, AI slop removal, and a standard review report. Use when reviewing or polishing a draft or translation.
+description: "Editorial review checklist for general-audience writing: structure, clarity, polish, Japanese ra-nuki and i-nuki checks, AI slop removal, and a standard review report. Use when reviewing or polishing a draft or translation."
 ---
 
 # Editorial review

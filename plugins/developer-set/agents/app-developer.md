@@ -1,6 +1,6 @@
 ---
 name: app-developer
-description: Implements web and mobile application changes from a design or task: writes code and tests, runs them locally, and prepares a PR description. Use when a task needs code written or changed.
+description: "Implements web and mobile application changes from a design or task: writes code and tests, runs them locally, and prepares a PR description. Use when a task needs code written or changed."
 model: sonnet
 tools: Read, Grep, Glob, Edit, Write, Bash
 skills: report-format, coding-conventions, definition-of-done
