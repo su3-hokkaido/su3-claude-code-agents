@@ -8,6 +8,7 @@
 #   4. Required frontmatter in agents and skills
 #   5. Agent / skill names are unique across all plugins
 #   6. The "Output Language" section of every agent equals scripts/output-language-block.md
+#   6b. Versions: SemVer in plugin.json only, with a matching CHANGELOG heading
 #   7. Repository rules (no commands/ directory, no shared/ directory)
 #   7b. Hook scripts: syntax and scripts/test-hooks.sh
 #   8. `claude plugin validate`, when the claude CLI is available
@@ -166,6 +167,27 @@ done
 if [ -f "$TMP/errs" ]; then
   ERRORS=$((ERRORS + $(wc -l <"$TMP/errs")))
   rm -f "$TMP/errs"
+fi
+# Versions: SemVer in plugin.json, none in marketplace.json, and a CHANGELOG heading for each.
+CL="CHANGELOG.md"
+[ -f "$CL" ] || err "$CL is missing"
+for d in plugins/*/; do
+  [ -d "$d" ] || continue
+  p=$(basename "$d")
+  m="plugins/$p/.claude-plugin/plugin.json"
+  [ -f "$m" ] || continue
+  v=$(jq -r '.version // empty' "$m")
+  case "$v" in
+    [0-9]*.[0-9]*.[0-9]*) ;;
+    *) err "$m: version '$v' must be set and look like MAJOR.MINOR.PATCH"; continue ;;
+  esac
+  case "$v" in
+    *[!0-9.]*) err "$m: version '$v' must be plain MAJOR.MINOR.PATCH" ;;
+  esac
+  [ -f "$CL" ] && { grep -Eq "^## $p $v( \(.*\))?$" "$CL" || err "$CL has no heading '## $p $v' for the version in $m"; }
+done
+if [ -f "$MP" ]; then
+  jq -e 'has("version") or ([.plugins[] | has("version")] | any)' "$MP" >/dev/null 2>&1 && err "$MP: do not set version in the marketplace file; plugin.json owns it"
 fi
 [ -d shared ] && err "shared/ must not exist (plugins are self-contained)"
 [ -d plugins/shared ] && err "plugins/shared must not exist (plugins are self-contained)"
