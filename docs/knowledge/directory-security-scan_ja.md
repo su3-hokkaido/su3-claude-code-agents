@@ -12,7 +12,7 @@
   1. **command フック**（`developer-set` 0.1.3）。`command` 型のフックは Verified organization からのみ受け付けられる。
   2. **許可リスト外の frontmatter キー**（`LOCAL_CODE_FRONTMATTER_KEY`）。許可リストは非公開で、指摘はキー名を示さない。
 - 1 の対応: フックは GitHub のみで配布する別 plugin（`-with-guards`）に残し、ディレクトリにはフックなしの通常版を提出する。
-- 2 の対応: プローブ版による二分探索で特定した。**原因は agent の frontmatter キー `skills`**。`model`、`tools`、`argument-hint`、`disable-model-invocation` は受理される。決定: ディレクトリ向け agent から `skills` を外し、必要なスキル本文を agent 本体に直接書く（[ADR 0001](../adr/0001-inline-skill-text-instead-of-agent-skills-key.md)）。
+- 2 の対応: プローブ版による二分探索で特定した。**原因は agent の frontmatter キー `skills`**。`model`、`tools`、`argument-hint`、`disable-model-invocation` は受理される。決定: 全 agent（通常版とその `-with-guards` 派生版）から `skills` を外し、必要なスキル本文を agent 本体に直接書く（[ADR 0001](../adr/0001-inline-skill-text-instead-of-agent-skills-key.md)）。6 plugin すべてを 0.1.1 としてリリースし、通常版 4 plugin は**セキュリティスキャンを通過**して Anthropic Reviewer の判定を待っている。
 - この 2 回の拒否の前にも、ポータルの検証・スキャンはフックスクリプトの無害な記述で 2 つの版を**ブロック**した。同じ文字列パターンが再発しうるため、下に残す。
 
 ## 時系列
@@ -28,6 +28,7 @@
 | 2026-11-07 | 通常版 4 plugin を提出 | 4 つすべて **拒否**: `LOCAL_CODE_FRONTMATTER_KEY`。 |
 | 2026-11-07 | ブランチ `directory-probe` のプローブ版で二分探索 | 原因を特定（下記）。 |
 | 2026-11-07 | Commander がレビュー中のプローブ版 3 件の提出を取り下げ。スキル本文を直接書く方針を決定 | ADR 0001。 |
+| 2026-11-07 | 6 plugin すべてを 0.1.1 としてリリース（スキル本文の直接記述、`disallowedTools` の `tools` 許可リストへの置き換え、掲載用 URL の追加）。追跡ブランチを `main` に戻し、`directory-probe` を削除 | 通常版 4 plugin はセキュリティスキャンを通過し、Anthropic Reviewer の判定待ち。 |
 
 ## 指摘 1: command フック
 
@@ -95,24 +96,28 @@
 
 ## 現状（2026-11-07 時点）
 
-| Plugin | 提出したプローブ版 | スキャン | 現在 |
-|---|---|---|---|
-| `su3-developer-set` | agent の `skills` を残した | 拒否（`LOCAL_CODE_FRONTMATTER_KEY`） | `skills` を外した本番版が必要。 |
-| `su3-product-owner-set` | agent の `skills`, `disallowedTools` を外した | 通過 | Commander がレビューを取り下げ。 |
-| `su3-tech-writer-set` | agent の `tools`, `model`, `skills` を外した | 通過 | Commander がレビューを取り下げ。 |
-| `su3-general-writer-set` | `name`, `description` のみ | 通過 | Commander がレビューを取り下げ。 |
+通常版 4 plugin はすべて 0.1.1 で、`main` から作った版であり、セキュリティスキャンを通過した。Anthropic Reviewer の公開判断を待っている。プローブ版は取り下げるか置き換えており、公開されたことはない。
 
-プローブ版は本物の plugin ではない（tech と general は `tools` と `model` を欠く）。どれも公開してはならない。
+スキャン通過で確認できたこと: `skills` と `disallowedTools` を外した agent、`tools` の値に `mcp__<サーバー名>` を含む形、`plugin.json` の掲載用 URL 項目。`mcp__<サーバー名>` の形が実行時に効くかは確認できていない（未テスト。ADR 0001 参照）。
+
+記録として、プローブ提出は次のとおり:
+
+| Plugin | 提出したプローブ版 | スキャン |
+|---|---|---|
+| `su3-developer-set` | agent の `skills` を残した | 拒否（`LOCAL_CODE_FRONTMATTER_KEY`） |
+| `su3-product-owner-set` | agent の `skills`, `disallowedTools` を外した | 通過 |
+| `su3-tech-writer-set` | agent の `tools`, `model`, `skills` を外した | 通過 |
+| `su3-general-writer-set` | `name`, `description` のみ | 通過 |
 
 ## 決定と対応
 
-決定（Commander、2026-11-07）: 下の選択肢 1。agent が必要とするスキル本文を、ディレクトリ向け plugin の agent 本体へ直接書く。重複は増えるが、制限付きキーなしで動き、最小権限の `tools` を保てる。[ADR 0001](../adr/0001-inline-skill-text-instead-of-agent-skills-key.md) に記録。
+決定（Commander、2026-11-07）: 下の選択肢 1。agent が必要とするスキル本文を、6 plugin すべての agent 本体へ直接書く。重複は増えるが、制限付きキーなしで動き、最小権限の `tools` を保てる。[ADR 0001](../adr/0001-inline-skill-text-instead-of-agent-skills-key.md) に記録。
 
-1. ディレクトリへ出す plugin の全 agent から `skills` キーを外し、スキル本文を各 agent 本体に書く。`model`、`tools`、`argument-hint`、`disable-model-invocation` は残す。
-2. ディレクトリ向け plugin では、プローブで受理が確認できるまで `disallowedTools` を使わない。同じ制限は `tools`（拒否ではなく許可するツールを列挙）で表す。
-3. ガード版にも同じ変更を適用し、各 plugin とその派生版を同一に保つ。これで `scripts/validate.sh` の一致検査は変更不要。
-4. 本番版を `main` に push し、各提出の追跡ブランチを `main` に戻して新しいコミットを確認し、意図した `tools` と `model` を持つ版だけを公開する。
-5. `directory-probe` ブランチを削除する。
+1. 全 agent から `skills` キーを外し、スキル本文を各 agent 本体に書く（完了）。`model`、`tools`、`argument-hint`、`disable-model-invocation` は残す。
+2. プローブで受理が確認できるまで `disallowedTools` を使わない（未検証のまま）。同じ制限は `tools` で表す。コネクタを使う 2 つの agent は、よくある `mcp__<サーバー名>` 接頭語を列挙した（完了）。
+3. ガード版にも同じ変更を適用し、各 plugin とその派生版を同一に保つ。これで `scripts/validate.sh` の一致検査は変更不要（完了）。
+4. 本番版を `main` に push し、各提出の追跡ブランチを `main` に戻して新しいコミットを確認する（完了）。意図した `tools` と `model` を持つ版だけを公開する。
+5. `directory-probe` ブランチを削除する（完了）。
 
 `skills` の事前読み込みを置き換える選択肢（検討したもの）:
 

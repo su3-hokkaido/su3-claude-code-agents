@@ -12,7 +12,7 @@ Japanese version: [`directory-security-scan_ja.md`](directory-security-scan_ja.m
   1. A **command hook** (`developer-set` 0.1.3). Hooks of type `command` are accepted only from Verified organizations.
   2. **Frontmatter keys outside an allowed list** (`LOCAL_CODE_FRONTMATTER_KEY`). The allowed list is not published and the finding does not name the key.
 - Fix for 1: ship the hook only in separate `-with-guards` plugins that stay on GitHub, and submit plain variants without hooks.
-- Fix for 2: found by bisecting with probe versions. **The agent frontmatter key `skills` is the cause.** `model`, `tools`, `argument-hint` and `disable-model-invocation` are accepted. Decision: remove `skills` from the directory-bound agents and write the needed skill text into the agent bodies (see [ADR 0001](../adr/0001-inline-skill-text-instead-of-agent-skills-key.md)).
+- Fix for 2: found by bisecting with probe versions. **The agent frontmatter key `skills` is the cause.** `model`, `tools`, `argument-hint` and `disable-model-invocation` are accepted. Decision: remove `skills` from every agent (the plain plugins and their `-with-guards` variants) and write the needed skill text into the agent bodies (see [ADR 0001](../adr/0001-inline-skill-text-instead-of-agent-skills-key.md)). Released as 0.1.1 of all six plugins; the four plain plugins then **passed the security scan** and wait for the Anthropic reviewer.
 - Before those two refusals, the portal's validation and scan also **blocked** two versions for harmless-looking text in the hook scripts. They are listed below because the same text patterns can come back.
 
 ## Timeline
@@ -28,6 +28,7 @@ Japanese version: [`directory-security-scan_ja.md`](directory-security-scan_ja.m
 | 2026-11-07 | Submission of the four plain plugins | **Refused** for all four: `LOCAL_CODE_FRONTMATTER_KEY`. |
 | 2026-11-07 | Bisection with probe versions on branch `directory-probe` | Cause found (below). |
 | 2026-11-07 | Commander withdrew the three probe submissions in review; decision to inline skill text | ADR 0001. |
+| 2026-11-07 | Released 0.1.1 of all six plugins (skill text inlined, `disallowedTools` replaced by a `tools` allow-list, listing URLs added); tracked branch set back to `main`; `directory-probe` deleted | The four plain plugins passed the security scan and are awaiting the Anthropic reviewer. |
 
 ## Finding 1: command hooks
 
@@ -95,24 +96,28 @@ Policy holds and notes that remain and need no fix (a reviewer reads them):
 
 ## Current state (as of 2026-11-07)
 
-| Plugin | Probe version submitted | Scan | Now |
-|---|---|---|---|
-| `su3-developer-set` | agent `skills` kept | refused (`LOCAL_CODE_FRONTMATTER_KEY`) | Needs the real, `skills`-free version. |
-| `su3-product-owner-set` | agent `skills`, `disallowedTools` removed | passed | Review withdrawn by the Commander. |
-| `su3-tech-writer-set` | agent `tools`, `model`, `skills` removed | passed | Review withdrawn by the Commander. |
-| `su3-general-writer-set` | only `name`, `description` | passed | Review withdrawn by the Commander. |
+All four plain plugins are at 0.1.1, built from `main`, and passed the security scan. They are waiting for the Anthropic reviewer to publish. The probe versions were withdrawn or replaced and were never published.
 
-The probe versions were never real plugins (the tech and general ones lacked `tools` and `model`). None of them may be published.
+What the passing scan confirms: agents without `skills` and `disallowedTools`, with `tools` values that include `mcp__<server>` entries, and the listing URL fields in `plugin.json`. It does not confirm that the `mcp__<server>` form works at runtime (not yet tested; see ADR 0001).
 
-## Decision and what to do
+For the record, the probe submissions were:
 
-Decision (Commander, 2026-11-07): option 1 below. The skill text the agents need is written directly into the agent bodies of the directory-bound plugins. Duplication grows, but the agents run without any restricted key and keep least-privilege `tools`. Recorded in [ADR 0001](../adr/0001-inline-skill-text-instead-of-agent-skills-key.md).
+| Plugin | Probe version submitted | Scan |
+|---|---|---|
+| `su3-developer-set` | agent `skills` kept | refused (`LOCAL_CODE_FRONTMATTER_KEY`) |
+| `su3-product-owner-set` | agent `skills`, `disallowedTools` removed | passed |
+| `su3-tech-writer-set` | agent `tools`, `model`, `skills` removed | passed |
+| `su3-general-writer-set` | only `name`, `description` | passed |
 
-1. Remove the `skills` key from every agent in the plugins that go to the directory and write the skill text into each agent body. Keep `model`, `tools`, `argument-hint` and `disable-model-invocation`.
-2. Do not use `disallowedTools` in directory-bound plugins unless a probe shows it is accepted. Express the same limit with `tools` (list the allowed tools instead of denying some).
-3. Apply the same change to the `-with-guards` variants so each plugin and its variant stay identical and the parity check in `scripts/validate.sh` needs no change.
-4. Push the real version to `main`, point each submission's tracked branch back to `main`, check for new commits, and only publish a version that has the intended `tools` and `model`.
-5. Delete the `directory-probe` branch.
+## Decision and what was done
+
+Decision (Commander, 2026-11-07): option 1 below. The skill text the agents need is written directly into the agent bodies, in all six plugins. Duplication grows, but the agents run without any restricted key and keep least-privilege `tools`. Recorded in [ADR 0001](../adr/0001-inline-skill-text-instead-of-agent-skills-key.md).
+
+1. Remove the `skills` key from every agent and write the skill text into each agent body (done). Keep `model`, `tools`, `argument-hint` and `disable-model-invocation`.
+2. Do not use `disallowedTools` unless a probe shows it is accepted (still untested). The same limit is expressed with `tools`; the two agents that use connectors list common `mcp__<server>` prefixes (done).
+3. Apply the same change to the `-with-guards` variants so each plugin and its variant stay identical and the parity check in `scripts/validate.sh` needs no change (done).
+4. Push the real version to `main`, point each submission's tracked branch back to `main`, and check for new commits (done). Publish only a version that has the intended `tools` and `model`.
+5. Delete the `directory-probe` branch (done).
 
 Options that were considered for replacing the `skills` preload:
 
