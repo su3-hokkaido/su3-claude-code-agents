@@ -1,6 +1,6 @@
 # su3-developer-set
 
-Subagents and skills for the delivery pipeline. Part of the `scrum-ai-ecosystem` marketplace. Version 0.1.0.
+Subagents and skills for the delivery pipeline. Part of the `su3-hokkaido-ai-ecosystem` marketplace. Version 0.1.0.
 
 > **No hooks.** This plugin ships no hook, so it can be listed in Anthropic's directory (which accepts command hooks only from Verified organizations). Nothing blocks a dangerous command automatically: the agents' guardrails are instructions only. For the same agents with a guard hook, install [`su3-developer-set-with-guards`](../su3-developer-set-with-guards/README.md) instead. Do not install both: their commands and agents overlap.
 
@@ -44,7 +44,7 @@ None. The guard hook that denies or asks before data changes, live infrastructur
 
 | Option | Default | Description |
 |---|---|---|
-| `output_language` | `auto` | Reply language: `auto`, `en`, `ja` or any BCP-47 code. Change it with `/plugin configure su3-developer-set@scrum-ai-ecosystem` or `/su3-developer-set:set-language`. Applies after a restart. |
+| `output_language` | `auto` | Reply language: `auto`, `en`, `ja` or any BCP-47 code. Change it with `/plugin configure su3-developer-set@su3-hokkaido-ai-ecosystem` or `/su3-developer-set:set-language`. Applies after a restart. |
 | `allow_concurrency` | `false` | Allow independent steps of the three commands to run at the same time. Off by default. |
 
 ## Prerequisites
@@ -55,5 +55,5 @@ None are required. Slack, Jira, Datadog and PagerDuty connectors make `su3-sre` 
 
 ```text
 /plugin marketplace add su3-hokkaido/su3-claude-code-agents
-/plugin install su3-developer-set@scrum-ai-ecosystem
+/plugin install su3-developer-set@su3-hokkaido-ai-ecosystem
 ```

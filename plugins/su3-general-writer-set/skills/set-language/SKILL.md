@@ -20,11 +20,11 @@ Arguments: `$ARGUMENTS`
 3. Save it by running the command below in Bash. The user approves the command, so do not work around a refusal.
 
    ```sh
-   printf '{"output_language":"<code>"}' | claude plugin configure su3-general-writer-set@scrum-ai-ecosystem --values-stdin
+   printf '{"output_language":"<code>"}' | claude plugin configure su3-general-writer-set@su3-hokkaido-ai-ecosystem --values-stdin
    ```
 
-4. If the second argument is `all`, also run `claude plugin list` and repeat step 3 for every other installed plugin whose id ends with `@scrum-ai-ecosystem`. Each plugin keeps its own setting.
-5. Report the result in one or two lines. Tell the Commander that the new value applies after Claude Code restarts. If the command fails, show its error. `claude plugin configure` needs Claude Code v2.1.285 or later. The Commander can also run `/plugin configure su3-general-writer-set@scrum-ai-ecosystem` to edit it in a dialog.
+4. If the second argument is `all`, also run `claude plugin list` and repeat step 3 for every other installed plugin whose id ends with `@su3-hokkaido-ai-ecosystem`. Each plugin keeps its own setting.
+5. Report the result in one or two lines. Tell the Commander that the new value applies after Claude Code restarts. If the command fails, show its error. `claude plugin configure` needs Claude Code v2.1.285 or later. The Commander can also run `/plugin configure su3-general-writer-set@su3-hokkaido-ai-ecosystem` to edit it in a dialog.
 
 ## Guardrails
 

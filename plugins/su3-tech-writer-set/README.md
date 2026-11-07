@@ -1,6 +1,6 @@
 # su3-tech-writer-set
 
-Subagents for technical articles and blog posts, with full writer skills. Part of the `scrum-ai-ecosystem` marketplace. Version 0.1.0.
+Subagents for technical articles and blog posts, with full writer skills. Part of the `su3-hokkaido-ai-ecosystem` marketplace. Version 0.1.0.
 
 > **Status: templates filled in, not yet used in production.** Each agent has its role, inputs and outputs, guardrails and working templates.
 
@@ -27,7 +27,7 @@ Agents draft and review only. The Commander publishes.
 
 | Option | Default | Description |
 |---|---|---|
-| `output_language` | `auto` | Reply language: `auto`, `en`, `ja` or any BCP-47 code. Change it with `/plugin configure su3-tech-writer-set@scrum-ai-ecosystem` or `/su3-tech-writer-set:set-language`. Applies after a restart. |
+| `output_language` | `auto` | Reply language: `auto`, `en`, `ja` or any BCP-47 code. Change it with `/plugin configure su3-tech-writer-set@su3-hokkaido-ai-ecosystem` or `/su3-tech-writer-set:set-language`. Applies after a restart. |
 
 ## Prerequisites
 
@@ -37,5 +37,5 @@ None required. `su3-tech-content-scout` can read Scrum artifacts from files or e
 
 ```text
 /plugin marketplace add su3-hokkaido/su3-claude-code-agents
-/plugin install su3-tech-writer-set@scrum-ai-ecosystem
+/plugin install su3-tech-writer-set@su3-hokkaido-ai-ecosystem
 ```

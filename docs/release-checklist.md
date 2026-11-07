@@ -30,9 +30,9 @@ Never rename a published plugin. Renames need a `renames` entry in `marketplace.
 
    ```sh
    claude plugin marketplace add ./
-   claude plugin install <plugin>@scrum-ai-ecosystem
+   claude plugin install <plugin>@su3-hokkaido-ai-ecosystem
    # try it in a session, then
-   claude plugin marketplace remove scrum-ai-ecosystem
+   claude plugin marketplace remove su3-hokkaido-ai-ecosystem
    ```
 
 ## 3. Commit and push (run by the Commander)
@@ -68,11 +68,11 @@ In a clean environment (a different machine, or after removing the marketplace):
 
 ```sh
 claude plugin marketplace add su3-hokkaido/su3-claude-code-agents
-claude plugin install <plugin>@scrum-ai-ecosystem
+claude plugin install <plugin>@su3-hokkaido-ai-ecosystem
 claude plugin list        # shows the new version
 ```
 
-For an existing install: `claude plugin update <plugin>@scrum-ai-ecosystem`. If it prints `already at the latest version`, the `version` was not raised.
+For an existing install: `claude plugin update <plugin>@su3-hokkaido-ai-ecosystem`. If it prints `already at the latest version`, the `version` was not raised.
 
 ## 6. Afterwards
 

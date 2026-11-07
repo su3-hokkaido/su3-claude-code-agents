@@ -1,6 +1,6 @@
 # su3-claude-code-agents
 
-A Claude Code plugin marketplace, **`scrum-ai-ecosystem`**: subagents for the roles I work in as Product Owner, Developer, Scrum Master, Writer and more.
+A Claude Code plugin marketplace, **`su3-hokkaido-ai-ecosystem`**: subagents for the roles I work in as Product Owner, Developer, Scrum Master, Writer and more.
 
 > **Status: for personal use, not yet proven in production.** All plugins are at 0.1.0 under their new `su3-` names. The only open TODO is the Claude Design integration for `su3-uiux-designer`. Tested with Claude Code 2.1.316.
 
@@ -19,23 +19,23 @@ Every plugin and agent name starts with `su3-`. Two plugins come in two variants
 
 Each plugin is self-contained. The developer sets also ship three commands: `/su3-developer-set:sprint-plan`, `/su3-developer-set:design-review` and `/su3-developer-set:release-check` (with `-with-guards` in the plugin name for the guarded variant).
 
-The old plugin names `developer-set`, `product-owner-set`, `tech-writer-set` and `general-writer-set` are gone. `marketplace.json` maps them to their successors (`renames`): `developer-set` and `product-owner-set` move to the `-with-guards` variants, because those kept the hooks; the writer sets move to their `su3-` names.
+The earlier plugins `developer-set`, `product-owner-set`, `tech-writer-set` and `general-writer-set` (marketplace `scrum-ai-ecosystem`) are discontinued. The marketplace itself was renamed to `su3-hokkaido-ai-ecosystem`, so installs do not migrate by themselves: run `claude plugin marketplace remove scrum-ai-ecosystem` (it uninstalls that marketplace's plugins), add this marketplace, and install the plugins you want. `developer-set` and `product-owner-set` correspond to the `-with-guards` variants, because those kept the hooks.
 
 ## Installation
 
 ```text
 /plugin marketplace add su3-hokkaido/su3-claude-code-agents
-/plugin install su3-developer-set@scrum-ai-ecosystem
+/plugin install su3-developer-set@su3-hokkaido-ai-ecosystem
 ```
 
 Or from your shell:
 
 ```text
 claude plugin marketplace add su3-hokkaido/su3-claude-code-agents
-claude plugin install su3-developer-set@scrum-ai-ecosystem
+claude plugin install su3-developer-set@su3-hokkaido-ai-ecosystem
 ```
 
-Update with `claude plugin update <plugin>@scrum-ai-ecosystem`. Auto-update is off by default for third-party marketplaces; turn it on in `/plugin` under Marketplaces. A plugin updates only when its `version` changes (see Versioning).
+Update with `claude plugin update <plugin>@su3-hokkaido-ai-ecosystem`. Auto-update is off by default for third-party marketplaces; turn it on in `/plugin` under Marketplaces. A plugin updates only when its `version` changes (see Versioning).
 
 ## Safety guards
 
@@ -48,7 +48,7 @@ The writer plugins only draft and review. They publish nothing. The hooks are te
 
 ## Output language
 
-Agent definitions are written in English, but the language agents reply in is configurable through each plugin's `output_language` option: `auto` (default, follows your input), `en`, `ja`, or any BCP-47 code. Translation agents always output in the requested target language. Change it with `/plugin configure <plugin>@scrum-ai-ecosystem` or `/<plugin>:set-language <code>`; it applies after a restart. The option is set per plugin and per user, not per project.
+Agent definitions are written in English, but the language agents reply in is configurable through each plugin's `output_language` option: `auto` (default, follows your input), `en`, `ja`, or any BCP-47 code. Translation agents always output in the requested target language. Change it with `/plugin configure <plugin>@su3-hokkaido-ai-ecosystem` or `/<plugin>:set-language <code>`; it applies after a restart. The option is set per plugin and per user, not per project.
 
 ## Prerequisites
 
@@ -84,7 +84,7 @@ Or add the repository as a local marketplace, then install:
 
 ```text
 claude plugin marketplace add ./
-claude plugin install su3-developer-set@scrum-ai-ecosystem
+claude plugin install su3-developer-set@su3-hokkaido-ai-ecosystem
 ```
 
 A marketplace added from a local path loads each plugin's current source in place, so edits take effect at the next session start or `/reload-plugins` without changing `version`.

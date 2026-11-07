@@ -1,6 +1,6 @@
 # su3-product-owner-set
 
-Subagents for Product Owners. Part of the `scrum-ai-ecosystem` marketplace. Version 0.1.0.
+Subagents for Product Owners. Part of the `su3-hokkaido-ai-ecosystem` marketplace. Version 0.1.0.
 
 > **No hooks.** This plugin ships no hook, so it can be listed in Anthropic's directory (which accepts command hooks only from Verified organizations). Nothing blocks a ticket change, a version change or a missing ADR automatically: the agents' guardrails are instructions only. For the same agents with a guard hook, install [`su3-product-owner-set-with-guards`](../su3-product-owner-set-with-guards/README.md) instead. Do not install both: their agents overlap.
 
@@ -34,7 +34,7 @@ None. The guard hook that denies ticket deletion, sprint writes and version chan
 
 | Option | Default | Description |
 |---|---|---|
-| `output_language` | `auto` | Reply language: `auto`, `en`, `ja` or any BCP-47 code. Change it with `/plugin configure su3-product-owner-set@scrum-ai-ecosystem` or `/su3-product-owner-set:set-language`. Applies after a restart. |
+| `output_language` | `auto` | Reply language: `auto`, `en`, `ja` or any BCP-47 code. Change it with `/plugin configure su3-product-owner-set@su3-hokkaido-ai-ecosystem` or `/su3-product-owner-set:set-language`. Applies after a restart. |
 
 ## Prerequisites
 
@@ -44,5 +44,5 @@ None. The guard hook that denies ticket deletion, sprint writes and version chan
 
 ```text
 /plugin marketplace add su3-hokkaido/su3-claude-code-agents
-/plugin install su3-product-owner-set@scrum-ai-ecosystem
+/plugin install su3-product-owner-set@su3-hokkaido-ai-ecosystem
 ```

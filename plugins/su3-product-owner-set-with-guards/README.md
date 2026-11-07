@@ -1,6 +1,6 @@
 # su3-product-owner-set-with-guards
 
-Subagents for Product Owners, with a guard hook. Part of the `scrum-ai-ecosystem` marketplace. Version 0.1.0.
+Subagents for Product Owners, with a guard hook. Part of the `su3-hokkaido-ai-ecosystem` marketplace. Version 0.1.0.
 
 > **This is the variant with the guard hook.** It is the same set of agents as [`su3-product-owner-set`](../su3-product-owner-set/README.md), plus a `PreToolUse` command hook. Anthropic's directory accepts command hooks only from Verified organizations, so this variant is distributed through this GitHub marketplace only. Do not install both variants: their agents overlap.
 
@@ -53,7 +53,7 @@ Notes:
 
 | Option | Default | Description |
 |---|---|---|
-| `output_language` | `auto` | Reply language: `auto`, `en`, `ja` or any BCP-47 code. Change it with `/plugin configure su3-product-owner-set-with-guards@scrum-ai-ecosystem` or `/su3-product-owner-set-with-guards:set-language`. Applies after a restart. |
+| `output_language` | `auto` | Reply language: `auto`, `en`, `ja` or any BCP-47 code. Change it with `/plugin configure su3-product-owner-set-with-guards@su3-hokkaido-ai-ecosystem` or `/su3-product-owner-set-with-guards:set-language`. Applies after a restart. |
 
 ## Prerequisites
 
@@ -63,5 +63,5 @@ Notes:
 
 ```text
 /plugin marketplace add su3-hokkaido/su3-claude-code-agents
-/plugin install su3-product-owner-set-with-guards@scrum-ai-ecosystem
+/plugin install su3-product-owner-set-with-guards@su3-hokkaido-ai-ecosystem
 ```

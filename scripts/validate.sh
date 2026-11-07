@@ -98,7 +98,7 @@ MP=".claude-plugin/marketplace.json"
 if [ ! -f "$MP" ]; then
   err "$MP is missing"
 else
-  [ "$(jq -r '.name // empty' "$MP")" = "scrum-ai-ecosystem" ] || err "$MP: name must be scrum-ai-ecosystem"
+  [ "$(jq -r '.name // empty' "$MP")" = "su3-hokkaido-ai-ecosystem" ] || err "$MP: name must be su3-hokkaido-ai-ecosystem"
   [ -n "$(jq -r '.owner.name // empty' "$MP")" ] || err "$MP: owner.name is required"
   [ -n "$(jq -r '.description // empty' "$MP")" ] || warn "$MP: description is missing"
 
