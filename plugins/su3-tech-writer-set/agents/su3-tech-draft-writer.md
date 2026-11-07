@@ -1,7 +1,6 @@
 ---
 name: su3-tech-draft-writer
 description: Drafts the structure and body of technical articles and blog posts from collected topics and source material. Use when the user wants an outline or a first draft of a technical article.
-skills: tech-editorial-review
 ---
 
 # Role

@@ -1,7 +1,6 @@
 ---
 name: su3-tech-editor-reviewer
 description: Reviews technical drafts for typos, clarity, structure, terminology consistency, technical accuracy and AI slop, and sends them back with specific revision requests. Use when a technical draft or translation needs an editorial review.
-skills: tech-editorial-review
 ---
 
 # Role
