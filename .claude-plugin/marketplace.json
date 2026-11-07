@@ -1,37 +1,57 @@
 {
   "name": "scrum-ai-ecosystem",
-  "description": "Subagents for Scrum roles and the development pipeline: developer, product owner, technical writer and general writer sets.",
+  "description": "Subagents for Scrum roles and the development pipeline: developer, product owner, technical writer and general writer sets, each without hooks, plus guard-hook variants of the developer and product owner sets.",
   "owner": {
     "name": "su3-hokkaido"
   },
   "plugins": [
     {
-      "name": "developer-set",
-      "source": "./plugins/developer-set",
-      "description": "Subagents for the delivery pipeline: project management, architecture, development, SRE, AI reliability, QC and QA.",
+      "name": "su3-developer-set",
+      "source": "./plugins/su3-developer-set",
+      "description": "Subagents for the delivery pipeline: project management, architecture, development, SRE, AI reliability, QC and QA. No hooks.",
       "category": "development",
       "tags": ["scrum", "developer", "sre", "qa"]
     },
     {
-      "name": "product-owner-set",
-      "source": "./plugins/product-owner-set",
-      "description": "Subagents for Product Owners: strategy, market research, security maintenance, UI/UX, prototyping and backlog management.",
+      "name": "su3-developer-set-with-guards",
+      "source": "./plugins/su3-developer-set-with-guards",
+      "description": "The same delivery pipeline agents as su3-developer-set, plus a guard hook that denies or asks before data changes, live infrastructure changes and version upgrades. Install one of the two, not both.",
+      "category": "development",
+      "tags": ["scrum", "developer", "sre", "qa", "guards"]
+    },
+    {
+      "name": "su3-product-owner-set",
+      "source": "./plugins/su3-product-owner-set",
+      "description": "Subagents for Product Owners: strategy, market research, security maintenance, UI/UX, prototyping and backlog management. No hooks.",
       "category": "productivity",
       "tags": ["scrum", "product-owner", "backlog"]
     },
     {
-      "name": "tech-writer-set",
-      "source": "./plugins/tech-writer-set",
+      "name": "su3-product-owner-set-with-guards",
+      "source": "./plugins/su3-product-owner-set-with-guards",
+      "description": "The same Product Owner agents as su3-product-owner-set, plus a guard hook for tickets, sprints, version changes and ADRs. Install one of the two, not both.",
+      "category": "productivity",
+      "tags": ["scrum", "product-owner", "backlog", "guards"]
+    },
+    {
+      "name": "su3-tech-writer-set",
+      "source": "./plugins/su3-tech-writer-set",
       "description": "Subagents for technical articles: content scouting, drafting, translation and editorial review.",
       "category": "writing",
       "tags": ["writing", "technical", "translation"]
     },
     {
-      "name": "general-writer-set",
-      "source": "./plugins/general-writer-set",
+      "name": "su3-general-writer-set",
+      "source": "./plugins/su3-general-writer-set",
       "description": "Subagents for general-audience writing: drafting, translation and editorial review.",
       "category": "writing",
       "tags": ["writing", "translation", "editing"]
     }
-  ]
+  ],
+  "renames": {
+    "developer-set": "su3-developer-set-with-guards",
+    "product-owner-set": "su3-product-owner-set-with-guards",
+    "tech-writer-set": "su3-tech-writer-set",
+    "general-writer-set": "su3-general-writer-set"
+  }
 }

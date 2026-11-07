@@ -43,7 +43,7 @@ Never rename a published plugin. Renames need a `renames` entry in `marketplace.
 
 ## 4. Tag (run by the Commander)
 
-Tag each released plugin on the commit that carries its new `version`. Run this from the plugin's directory, one plugin at a time. The tag is named `<plugin>--v<version>`, for example `developer-set--v0.1.0`.
+Tag each released plugin on the commit that carries its new `version`. Run this from the plugin's directory, one plugin at a time. The tag is named `<plugin>--v<version>`, for example `su3-developer-set--v0.1.0`.
 
 Choose **one** of these two ways. Do not run both for the same plugin: `claude plugin tag --push` fails with "Tag ... already exists locally" if the tag was already created.
 

@@ -1,0 +1,16 @@
+{
+  "description": "Guard: asks for confirmation before a su3-developer-set-with-guards subagent runs a dangerous Bash command. Acts only inside su3-developer-set-with-guards subagents.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/scripts/guard-bash.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

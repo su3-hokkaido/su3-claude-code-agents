@@ -139,6 +139,10 @@ for d in plugins/*/; do
   case "$p" in
     *[!a-z0-9-]* | -* | *-) err "$m: plugin name '$p' must be kebab-case" ;;
   esac
+  case "$p" in
+    su3-*) ;;
+    *) err "$m: plugin name '$p' must start with 'su3-'" ;;
+  esac
   for key in version description author homepage repository license keywords; do
     jq -e --arg k "$key" 'has($k)' "$m" >/dev/null 2>&1 || warn "$m: recommended field '$key' is missing"
   done
@@ -231,6 +235,14 @@ for f in plugins/*/agents/*.md; do
   esac
   [ -n "$tools" ] || warn "$f: 'tools' is not set (inherits all tools); apply least privilege"
   [ "$name" = "$(basename "$f" .md)" ] || err "$f: name '$name' must match the file name"
+  case "$name" in
+    su3-*) ;;
+    *) err "$f: agent name '$name' must start with 'su3-'" ;;
+  esac
+  case "$p" in
+    *-with-guards) case "$name" in *-with-guards) ;; *) err "$f: agents of a -with-guards plugin must end with '-with-guards' (got '$name')" ;; esac ;;
+    *) case "$name" in *-with-guards) err "$f: only agents of a -with-guards plugin may end with '-with-guards'" ;; esac ;;
+  esac
   for h in "# Role" "# Responsibilities" "# Inputs / Outputs" "# Collaboration" "# Guardrails" "# Output Language"; do
     grep -q "^$h" "$f" || err "$f: missing section '$h'"
   done
@@ -257,6 +269,12 @@ cut -f1 "$NAMES" | sort | uniq -d | while read -r dup; do
   case " $ALLOWED_DUPLICATES " in
     *" $dup "*) continue ;;
   esac
+  # A skill may repeat only as a base / -with-guards pair of one plugin (plugin names differ, so they do not collide).
+  pairs_ok=$(awk -F'\t' -v n="$dup" '
+    $1 == n { if ($2 != "skill") bad = 1; p = $3; if (p ~ /-with-guards$/) gd[p]++; sub(/-with-guards$/, "", p); c[p]++ }
+    END { for (k in c) if (c[k] != 2) bad = 1; for (k in gd) if (gd[k] != 1) bad = 1; print bad ? "no" : "yes" }
+  ' "$NAMES")
+  [ "$pairs_ok" = "yes" ] && continue
   echo "ERROR: name '$dup' is used more than once:" >&2
   awk -F'\t' -v n="$dup" '$1 == n { print "         " $4 }' "$NAMES" >&2
   echo x >>"$TMP/errs"
@@ -266,17 +284,69 @@ if [ -f "$TMP/errs" ]; then
   rm -f "$TMP/errs"
 fi
 
-# tech-writer-set agents and skills must carry the tech- prefix.
-awk -F'\t' '$3 == "tech-writer-set" { print $1 "\t" $4 }' "$NAMES" | while IFS="$(printf '\t')" read -r n f; do
+# su3-tech-writer-set agents and skills must carry the tech- prefix (after su3- for agents).
+awk -F'\t' '$3 == "su3-tech-writer-set" { print $1 "\t" $4 }' "$NAMES" | while IFS="$(printf '\t')" read -r n f; do
   case "$n" in
-    tech-* | set-language) ;;
-    *) echo "ERROR: $f: tech-writer-set names must start with 'tech-' (got '$n')" >&2; echo x >>"$TMP/errs" ;;
+    tech-* | su3-tech-* | set-language) ;;
+    *) echo "ERROR: $f: su3-tech-writer-set names must start with 'tech-' or 'su3-tech-' (got '$n')" >&2; echo x >>"$TMP/errs" ;;
   esac
 done
 if [ -f "$TMP/errs" ]; then
   ERRORS=$((ERRORS + $(wc -l <"$TMP/errs")))
   rm -f "$TMP/errs"
 fi
+
+# --- 5b. -with-guards variants ---------------------------------------------------
+
+info "== Guard variants"
+# Normalized text of a file: variant suffix removed and lines about the guard hook dropped,
+# so a plugin and its -with-guards variant must agree on everything else.
+norm_variant() {
+  sed 's/-with-guards//g' "$1" | grep -viE 'hook|Nothing blocks' || true
+}
+for g in plugins/*-with-guards; do
+  [ -d "$g" ] || continue
+  gp=$(basename "$g")
+  bp=${gp%-with-guards}
+  b="plugins/$bp"
+  [ -d "$b" ] || { err "$g: base plugin $b does not exist"; continue; }
+  [ -f "$g/hooks/hooks.json" ] || err "$g: a -with-guards plugin must have hooks/hooks.json"
+  [ -d "$b/hooks" ] && err "$b: the base plugin must have no hooks/ directory (the hook belongs in $gp)"
+  [ -d "$b/scripts" ] && err "$b: the base plugin must have no scripts/ directory (guard scripts belong in $gp)"
+  # Same agents and skills, same content apart from the variant suffix and guard-hook wording.
+  for f in "$b"/agents/*.md; do
+    [ -f "$f" ] || continue
+    base=$(basename "$f" .md)
+    gf="$g/agents/${base}-with-guards.md"
+    [ -f "$gf" ] || { err "$gf is missing (the base plugin has $f)"; continue; }
+    [ "$(norm_variant "$f")" = "$(norm_variant "$gf")" ] || err "$gf differs from $f beyond the variant suffix and guard-hook wording"
+  done
+  for gf in "$g"/agents/*.md; do
+    [ -f "$gf" ] || continue
+    base=$(basename "$gf" -with-guards.md)
+    [ -f "$b/agents/$base.md" ] || err "$gf has no counterpart $b/agents/$base.md"
+  done
+  for f in "$b"/skills/*/SKILL.md; do
+    [ -f "$f" ] || continue
+    sk=$(basename "$(dirname "$f")")
+    gf="$g/skills/$sk/SKILL.md"
+    [ -f "$gf" ] || { err "$gf is missing (the base plugin has $f)"; continue; }
+    [ "$(norm_variant "$f")" = "$(norm_variant "$gf")" ] || err "$gf differs from $f beyond the variant suffix and guard-hook wording"
+  done
+  for gf in "$g"/skills/*/SKILL.md; do
+    [ -f "$gf" ] || continue
+    sk=$(basename "$(dirname "$gf")")
+    [ -f "$b/skills/$sk/SKILL.md" ] || err "$gf has no counterpart in $b"
+  done
+done
+# Only -with-guards plugins may ship hooks.
+for d in plugins/*/; do
+  [ -d "$d" ] || continue
+  case "$d" in
+    *-with-guards/) ;;
+    *) [ -d "${d}hooks" ] && err "${d}hooks exists; only -with-guards plugins may ship hooks (the directory refuses command hooks)" ;;
+  esac
+done
 
 # --- 6. Output Language block consistency -----------------------------------
 

@@ -1,0 +1,16 @@
+{
+  "description": "Guard: su3-product-owner-set-with-guards subagents never delete or change tickets and sprints on their own, never apply version changes, and must write an ADR before changing product or backlog documents. Acts only inside su3-product-owner-set-with-guards subagents.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit|MultiEdit|mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/scripts/guard-po.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

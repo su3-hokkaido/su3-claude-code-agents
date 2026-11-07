@@ -1,0 +1,31 @@
+{
+  "name": "su3-developer-set",
+  "version": "0.1.0",
+  "description": "Subagents for the delivery pipeline: project management, architecture, development, SRE, AI reliability, QC and QA. No hooks.",
+  "author": {
+    "name": "su3-hokkaido"
+  },
+  "homepage": "https://github.com/su3-hokkaido/su3-claude-code-agents",
+  "repository": "https://github.com/su3-hokkaido/su3-claude-code-agents",
+  "license": "MIT",
+  "keywords": [
+    "scrum",
+    "developer",
+    "sre",
+    "qa"
+  ],
+  "userConfig": {
+    "output_language": {
+      "type": "string",
+      "title": "Output language",
+      "description": "Language the agents reply in: auto (same as your input), en, ja, or any BCP-47 code such as fr or zh-CN. Translation agents always output in the requested target language.",
+      "default": "auto"
+    },
+    "allow_concurrency": {
+      "type": "boolean",
+      "title": "Allow concurrency",
+      "description": "Let the sprint-plan, design-review and release-check commands run independent agent steps at the same time. Off by default: steps run one at a time, in order. You can also pass --parallel or --sequential to a single run.",
+      "default": false
+    }
+  }
+}

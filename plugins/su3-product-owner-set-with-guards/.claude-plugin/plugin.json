@@ -1,0 +1,25 @@
+{
+  "name": "su3-product-owner-set-with-guards",
+  "version": "0.1.0",
+  "description": "Subagents for Product Owners: strategy, market research, security maintenance, UI/UX, prototyping and backlog management With guard hooks.",
+  "author": {
+    "name": "su3-hokkaido"
+  },
+  "homepage": "https://github.com/su3-hokkaido/su3-claude-code-agents",
+  "repository": "https://github.com/su3-hokkaido/su3-claude-code-agents",
+  "license": "MIT",
+  "keywords": [
+    "scrum",
+    "product-owner",
+    "backlog",
+    "guards"
+  ],
+  "userConfig": {
+    "output_language": {
+      "type": "string",
+      "title": "Output language",
+      "description": "Language the agents reply in: auto (same as your input), en, ja, or any BCP-47 code such as fr or zh-CN. Translation agents always output in the requested target language.",
+      "default": "auto"
+    }
+  }
+}

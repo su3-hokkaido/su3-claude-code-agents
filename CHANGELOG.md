@@ -6,6 +6,39 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 Nothing yet.
 
+## su3-developer-set 0.1.0 (2026-11-07)
+
+### Added
+- New plugin, successor of `developer-set` without hooks, so it can be listed in Anthropic's directory (which refused the old plugin: command hooks are accepted only from Verified organizations). Same seven agents and skills, renamed with the `su3-` prefix (`su3-project-manager`, `su3-system-architect`, `su3-app-developer`, `su3-sre`, `su3-aire`, `su3-qc`, `su3-qa`). The guardrails are instructions only.
+
+## su3-developer-set-with-guards 0.1.0 (2026-11-07)
+
+### Added
+- New plugin: `developer-set` 0.1.3 renamed, with the guard hook kept. Agents end with `-with-guards` (`su3-sre-with-guards`, ...). `developer-set` installs migrate to this plugin through `renames`. It is distributed through this GitHub marketplace only.
+
+## su3-product-owner-set 0.1.0 (2026-11-07)
+
+### Added
+- New plugin, successor of `product-owner-set` without hooks, for the directory. Same six agents and skills, renamed with the `su3-` prefix. The guardrails are instructions only.
+
+## su3-product-owner-set-with-guards 0.1.0 (2026-11-07)
+
+### Added
+- New plugin: `product-owner-set` 0.2.2 renamed, with the guard hook kept. `product-owner-set` installs migrate to this plugin through `renames`. It is distributed through this GitHub marketplace only.
+
+## su3-tech-writer-set 0.1.0 (2026-11-07)
+
+### Added
+- New plugin: `tech-writer-set` 0.2.1 renamed with the `su3-` prefix (`su3-tech-content-scout`, `su3-tech-draft-writer`, `su3-tech-translator`, `su3-tech-editor-reviewer`). `tech-writer-set` installs migrate through `renames`.
+
+## su3-general-writer-set 0.1.0 (2026-11-07)
+
+### Added
+- New plugin: `general-writer-set` 0.2.1 renamed with the `su3-` prefix (`su3-general-drafter`, `su3-translator`, `su3-editor-reviewer`). `general-writer-set` installs migrate through `renames`.
+
+### Removed (all four old plugins)
+- `developer-set`, `product-owner-set`, `tech-writer-set` and `general-writer-set` are no longer in the marketplace. Their last versions are `developer-set` 0.1.3, `product-owner-set` 0.2.2, `tech-writer-set` 0.2.1 and `general-writer-set` 0.2.1; their tags stay in git.
+
 ## developer-set 0.1.3 (2026-11-06)
 
 ### Fixed

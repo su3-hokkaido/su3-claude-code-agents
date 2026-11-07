@@ -4,8 +4,8 @@
 
 set -u
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
-GUARD="$ROOT/plugins/developer-set/scripts/guard-bash.sh"
-POGUARD="$ROOT/plugins/product-owner-set/scripts/guard-po.sh"
+GUARD="$ROOT/plugins/su3-developer-set-with-guards/scripts/guard-bash.sh"
+POGUARD="$ROOT/plugins/su3-product-owner-set-with-guards/scripts/guard-po.sh"
 FAILS=0
 
 # Marker files of the guard go to a private temp dir.
@@ -31,8 +31,8 @@ guard() {
   esac
 }
 
-DEV="developer-set:app-developer"
-SRE="developer-set:sre"
+DEV="su3-developer-set-with-guards:su3-app-developer-with-guards"
+SRE="su3-developer-set-with-guards:su3-sre-with-guards"
 
 # --- A. data changes: dry-run first, then a human ------------------------------
 S="s-data"
@@ -136,7 +136,7 @@ po() {
   esac
 }
 
-PO="product-owner-set:backlog-manager"
+PO="su3-product-owner-set-with-guards:su3-backlog-manager-with-guards"
 P="p-1"
 JIRA="mcp__claude_ai_Atlassian__"
 
@@ -210,7 +210,7 @@ po "p-other" "$PO" Write '{"file_path":"docs/product/roadmap.md","content":"x"}'
 
 # Outside product-owner-set agents the hook does nothing.
 po $P "" "${JIRA}deleteJiraIssue" '{}' none
-po $P "developer-set:sre" "${JIRA}deleteJiraIssue" '{}' none
+po $P "su3-developer-set-with-guards:su3-sre-with-guards" "${JIRA}deleteJiraIssue" '{}' none
 po $P "" Write '{"file_path":"docs/product/roadmap.md"}' none "$ADRDIR"
 
 if [ "$FAILS" -gt 0 ]; then

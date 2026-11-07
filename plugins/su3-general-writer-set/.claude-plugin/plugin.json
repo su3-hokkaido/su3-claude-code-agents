@@ -1,0 +1,24 @@
+{
+  "name": "su3-general-writer-set",
+  "version": "0.1.0",
+  "description": "Subagents for general-audience writing: drafting, translation and editorial review.",
+  "author": {
+    "name": "su3-hokkaido"
+  },
+  "homepage": "https://github.com/su3-hokkaido/su3-claude-code-agents",
+  "repository": "https://github.com/su3-hokkaido/su3-claude-code-agents",
+  "license": "MIT",
+  "keywords": [
+    "writing",
+    "translation",
+    "editing"
+  ],
+  "userConfig": {
+    "output_language": {
+      "type": "string",
+      "title": "Output language",
+      "description": "Language the agents reply in: auto (same as your input), en, ja, or any BCP-47 code such as fr or zh-CN. Translation agents always output in the requested target language.",
+      "default": "auto"
+    }
+  }
+}
