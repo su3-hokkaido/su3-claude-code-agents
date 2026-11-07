@@ -68,6 +68,8 @@ Each plugin has its own SemVer `version` in its `plugin.json`. It is raised by h
 
 ## Local testing
 
+A `Makefile` wraps the common commands below. Run `make help` for the list (for example `make validate`, `make check`, `make load PLUGIN=su3-developer-set`). It has no target that deletes or uninstalls anything.
+
 Validate everything (requires `jq`; also runs `claude plugin validate`):
 
 ```text
