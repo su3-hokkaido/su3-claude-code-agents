@@ -6,6 +6,56 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 Nothing yet.
 
+## su3-developer-set 0.1.1 (unreleased)
+
+### Changed
+- Agents no longer use the `skills` frontmatter key, which the directory scan refuses (`LOCAL_CODE_FRONTMATTER_KEY`). The skill text each agent needs is now written into its body (ADR 0001). The standalone skills are unchanged.
+
+### Added
+- Directory listing fields in `plugin.json`: `documentationUrl`, `supportUrl`, `privacyPolicyUrl`, `termsOfServiceUrl` (pages in the repository wiki).
+
+## su3-developer-set-with-guards 0.1.1 (unreleased)
+
+### Changed
+- Agents no longer use the `skills` frontmatter key, which the directory scan refuses (`LOCAL_CODE_FRONTMATTER_KEY`). The skill text each agent needs is now written into its body (ADR 0001). The standalone skills are unchanged.
+
+### Added
+- Directory listing fields in `plugin.json`: `documentationUrl`, `supportUrl`, `privacyPolicyUrl`, `termsOfServiceUrl` (pages in the repository wiki).
+
+## su3-product-owner-set 0.1.1 (unreleased)
+
+### Changed
+- Agents no longer use the `skills` frontmatter key, which the directory scan refuses (`LOCAL_CODE_FRONTMATTER_KEY`). The skill text each agent needs is now written into its body (ADR 0001). The standalone skills are unchanged.
+- `su3-market-researcher` and `su3-backlog-manager` no longer use `disallowedTools`. They list their allowed tools in `tools` instead (including `mcp__` prefixes for common connector servers: add yours if its name differs).
+
+### Added
+- Directory listing fields in `plugin.json`: `documentationUrl`, `supportUrl`, `privacyPolicyUrl`, `termsOfServiceUrl` (pages in the repository wiki).
+
+## su3-product-owner-set-with-guards 0.1.1 (unreleased)
+
+### Changed
+- Agents no longer use the `skills` frontmatter key, which the directory scan refuses (`LOCAL_CODE_FRONTMATTER_KEY`). The skill text each agent needs is now written into its body (ADR 0001). The standalone skills are unchanged.
+- `su3-market-researcher` and `su3-backlog-manager` no longer use `disallowedTools`. They list their allowed tools in `tools` instead (including `mcp__` prefixes for common connector servers: add yours if its name differs).
+
+### Added
+- Directory listing fields in `plugin.json`: `documentationUrl`, `supportUrl`, `privacyPolicyUrl`, `termsOfServiceUrl` (pages in the repository wiki).
+
+## su3-tech-writer-set 0.1.1 (unreleased)
+
+### Changed
+- Agents no longer use the `skills` frontmatter key, which the directory scan refuses (`LOCAL_CODE_FRONTMATTER_KEY`). The skill text each agent needs is now written into its body (ADR 0001). The standalone skills are unchanged.
+
+### Added
+- Directory listing fields in `plugin.json`: `documentationUrl`, `supportUrl`, `privacyPolicyUrl`, `termsOfServiceUrl` (pages in the repository wiki).
+
+## su3-general-writer-set 0.1.1 (unreleased)
+
+### Changed
+- Agents no longer use the `skills` frontmatter key, which the directory scan refuses (`LOCAL_CODE_FRONTMATTER_KEY`). The skill text each agent needs is now written into its body (ADR 0001). The standalone skills are unchanged.
+
+### Added
+- Directory listing fields in `plugin.json`: `documentationUrl`, `supportUrl`, `privacyPolicyUrl`, `termsOfServiceUrl` (pages in the repository wiki).
+
 ## su3-developer-set 0.1.0 (2026-11-07)
 
 ### Added

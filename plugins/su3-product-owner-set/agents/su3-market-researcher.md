@@ -2,7 +2,7 @@
 name: su3-market-researcher
 description: Collects and analyzes customer requests and bug reports from connected sources (Slack, Jira, Gmail, spreadsheets, Backlog) and summarizes themes with evidence. Use when the user asks what customers are asking for, which bugs recur, or for a market or feedback analysis.
 model: opus
-disallowedTools: Edit, Bash
+tools: Read, Grep, Glob, Write, WebSearch, WebFetch, mcp__slack, mcp__jira, mcp__atlassian, mcp__gmail, mcp__google-sheets, mcp__backlog
 ---
 
 # Role

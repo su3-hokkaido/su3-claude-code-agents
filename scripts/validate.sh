@@ -225,7 +225,6 @@ for f in plugins/*/agents/*.md; do
   desc=$(fm_get "$f" description)
   model=$(fm_get "$f" model)
   tools=$(fm_get "$f" tools)
-  [ -n "$tools" ] || tools=$(fm_get "$f" disallowedTools)
   [ -n "$name" ] || err "$f: frontmatter 'name' is required"
   [ -n "$desc" ] || err "$f: frontmatter 'description' is required"
   [ -n "$model" ] || err "$f: frontmatter 'model' is required"

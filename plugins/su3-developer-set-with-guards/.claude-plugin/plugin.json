@@ -1,6 +1,6 @@
 {
   "name": "su3-developer-set-with-guards",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Subagents for the delivery pipeline: project management, architecture, development, SRE, AI reliability, QC and QA With guard hooks.",
   "author": {
     "name": "su3-hokkaido"
@@ -28,5 +28,9 @@
       "description": "Let the sprint-plan, design-review and release-check commands run independent agent steps at the same time. Off by default: steps run one at a time, in order. You can also pass --parallel or --sequential to a single run.",
       "default": false
     }
-  }
+  },
+  "documentationUrl": "https://github.com/su3-hokkaido/su3-claude-code-agents/blob/main/README.md",
+  "supportUrl": "https://github.com/su3-hokkaido/su3-claude-code-agents/wiki/Support",
+  "privacyPolicyUrl": "https://github.com/su3-hokkaido/su3-claude-code-agents/wiki/Privacy-Policy",
+  "termsOfServiceUrl": "https://github.com/su3-hokkaido/su3-claude-code-agents/wiki/Terms-of-Service"
 }

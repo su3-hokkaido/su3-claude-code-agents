@@ -1,6 +1,6 @@
 {
   "name": "su3-product-owner-set",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Subagents for Product Owners: strategy, market research, security maintenance, UI/UX, prototyping and backlog management. No hooks.",
   "author": {
     "name": "su3-hokkaido"
@@ -20,5 +20,9 @@
       "description": "Language the agents reply in: auto (same as your input), en, ja, or any BCP-47 code such as fr or zh-CN. Translation agents always output in the requested target language.",
       "default": "auto"
     }
-  }
+  },
+  "documentationUrl": "https://github.com/su3-hokkaido/su3-claude-code-agents/blob/main/README.md",
+  "supportUrl": "https://github.com/su3-hokkaido/su3-claude-code-agents/wiki/Support",
+  "privacyPolicyUrl": "https://github.com/su3-hokkaido/su3-claude-code-agents/wiki/Privacy-Policy",
+  "termsOfServiceUrl": "https://github.com/su3-hokkaido/su3-claude-code-agents/wiki/Terms-of-Service"
 }
