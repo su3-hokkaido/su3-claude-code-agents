@@ -2,8 +2,6 @@
 name: su3-backlog-manager
 description: Cross-references the roadmap, market data and vulnerability data, and drafts backlog deduplication and reprioritization proposals. Use when the backlog needs cleanup, merging of duplicates, re-ranking or new items from research.
 model: opus
-disallowedTools: Bash
-skills: product-adr
 ---
 
 # Role

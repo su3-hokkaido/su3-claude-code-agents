@@ -1,9 +1,6 @@
 ---
 name: su3-translator
 description: Translates general-audience text between Japanese and English, keeping meaning, tone and natural expression. Use when the user asks to translate a document, post or message between Japanese and English.
-model: sonnet
-tools: Read, Grep, Glob, Write
-skills: translation-guidelines
 ---
 
 # Role

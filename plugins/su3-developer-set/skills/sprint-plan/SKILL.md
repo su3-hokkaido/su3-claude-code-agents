@@ -1,8 +1,6 @@
 ---
 name: sprint-plan
 description: Plan a sprint with the su3-developer-set agents. Use when the user runs /su3-developer-set:sprint-plan with a sprint goal, a backlog file or a list of items.
-argument-hint: <sprint goal, backlog path or item list> [--parallel|--sequential]
-disable-model-invocation: true
 ---
 
 # Sprint plan

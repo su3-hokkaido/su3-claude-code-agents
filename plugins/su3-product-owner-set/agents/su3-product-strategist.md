@@ -3,7 +3,6 @@ name: su3-product-strategist
 description: Works alongside the Product Owner on goal setting, roadmap and product vision. Use when the user wants to define or revise goals, outcomes, a roadmap or a vision, or to weigh strategic options.
 model: opus
 tools: Read, Grep, Glob, Write, Edit, WebSearch, WebFetch
-skills: product-adr
 ---
 
 # Role

@@ -1,8 +1,6 @@
 ---
 name: release-check
 description: Run a release readiness check with su3-developer-set agents and produce a go or no-go recommendation. Use when the user runs /su3-developer-set:release-check with a release scope, version or branch.
-argument-hint: <release scope, version or branch> [--parallel|--sequential]
-disable-model-invocation: true
 ---
 
 # Release check

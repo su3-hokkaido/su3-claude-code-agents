@@ -1,8 +1,6 @@
 ---
 name: set-language
 description: Set the language su3-developer-set agents reply in (auto, en, ja, or a BCP-47 code). Use when the user runs /su3-developer-set:set-language.
-argument-hint: <auto|en|ja|BCP-47 code> [all]
-disable-model-invocation: true
 ---
 
 # Set output language

@@ -1,8 +1,6 @@
 ---
 name: design-review
 description: Review a design document or architecture proposal with su3-developer-set agents. Use when the user runs /su3-developer-set:design-review with a design doc path or a description.
-argument-hint: <design doc path or description> [--parallel|--sequential]
-disable-model-invocation: true
 ---
 
 # Design review

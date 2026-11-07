@@ -1,8 +1,6 @@
 ---
 name: su3-tech-translator
 description: Localizes technical text between Japanese and English, preserving code, terminology and formatting. Use when the user asks to translate or localize a technical article, doc or README between Japanese and English.
-model: sonnet
-tools: Read, Grep, Glob, Write
 skills: tech-translation-guidelines
 ---
 

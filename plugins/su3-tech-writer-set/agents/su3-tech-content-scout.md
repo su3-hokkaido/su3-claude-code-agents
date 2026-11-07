@@ -1,8 +1,6 @@
 ---
 name: su3-tech-content-scout
 description: Extracts reusable knowledge topics for technical articles from Scrum activities, outputs and the backlog. Use when the user wants article ideas from recent work, a topic list, or candidates worth writing up.
-model: sonnet
-tools: Read, Grep, Glob
 ---
 
 # Role

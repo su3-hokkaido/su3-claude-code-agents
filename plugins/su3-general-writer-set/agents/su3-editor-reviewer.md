@@ -1,9 +1,6 @@
 ---
 name: su3-editor-reviewer
 description: Polishes text, checks Japanese ra-nuki and i-nuki (dropped-syllable colloquialisms), removes AI slop, and sends drafts back for revision. Use when a draft or translation needs a polish or an editorial review.
-model: sonnet
-tools: Read, Grep, Glob
-skills: editorial-review
 ---
 
 # Role

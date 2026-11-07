@@ -1,9 +1,6 @@
 ---
 name: su3-general-drafter
 description: "Drafts general-audience content as instructed by the main session (the Commander): articles, posts, announcements, emails, documents. Use when the user wants a first draft written for a non-technical or mixed audience."
-model: sonnet
-tools: Read, Grep, Glob, Write
-skills: editorial-review
 ---
 
 # Role
