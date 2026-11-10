@@ -127,11 +127,18 @@
 | 2. agent の `tools` に `Skill` を足し、読み込むスキルを指示する | 本文は 1 か所のまま。ただし `Skill` は読み取り系ツールではないため、レビュー系 agent が読み取り専用でなくなる。 |
 | 3. 事前読み込みをやめる | 最も単純。ユーザーが求めない限り、標準レポート形式や規約が agent から失われる。 |
 
+## 2026-11-10: `LOCAL_CODE_FILE_TYPE`
+
+- 指摘: 通常版 plugin にシェルスクリプト（shebang 付き）が入っていた。Verified でない組織に許可されるのは Markdown、テキスト、JSON、YAML、PNG/JPEG/GIF/WebP/ICO のみで、`#!` で始まるファイルは拒否される。
+- 対応: 通常版 `su3-developer-set` の `skills/project-implementation/loop-state.sh` を削除し 0.1.2 とした。`-with-guards` 版（GitHub 限定）は helper を残す。通常版はテキストのルールのみに従う。`scripts/validate.sh` は helper を base/guards の同一性チェックから除外し、通常版に許可外のファイル種別や `#!` ファイルがあれば失敗にする。
+- 同じレポートの対応不要な警告: `icon.png` の「コードをダウンロードして実行する」警告は誤検知（PNG の XMP メタデータ内の URL 文字列）。`plugin.json` の掲載用項目（`documentationUrl`、`privacyPolicyUrl`、`supportUrl`、`termsOfServiceUrl`）の警告は「対応不要」とされている。
+
 ## 次回提出前のチェックリスト
 
 - agent、skill、command、output style の frontmatter: 受理が確認できているのは `name`、`description`、`model`、`tools`、`argument-hint`、`disable-model-invocation` のみ。それ以外はリスク。使う前にプローブ版で試す。
 - `plugin.json` と `marketplace.json`: `author` は文字列、または名前・メール・URL。`tags` と `keywords` は文字列のみ。
 - ディレクトリへ出す plugin に `hooks/` を置かない。
+- 通常版 plugin に、Markdown、テキスト、JSON、YAML、PNG/JPEG/GIF/WebP/ICO 以外のファイルと `#!` ファイルを置かない（`scripts/validate.sh` が検査する）。
 - スクリプトでは、スキャンが無視すると分かるまで、変数パスへの書き込み、`..`、固定ファイルへのリダイレクトを、正規表現やコメント内であっても避ける。
 - 実験にはプローブ用ブランチとポータルの追跡ブランチ設定を使う。プローブ版は決して公開しない。
 - ポータルは Verified organization への申請手段がないとしている。状況が変わったら見直す。

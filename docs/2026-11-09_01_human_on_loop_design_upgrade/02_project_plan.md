@@ -223,7 +223,7 @@ Uses the project's `definition-of-done` plus these items:
 | J7-1 Policy self-modification | The guard hook reads the policy file with one read-only `git diff`; a policy file with uncommitted changes counts as degraded (strict). | 2026-11-09 |
 | J7-2 data-change route | `sre` runs before `qc` (architect, app-developer, sre, qc). | 2026-11-09 |
 | J7-3 Fixed English tokens | One sentence in the developer-set autonomy block only (not in the shared Output Language block). | 2026-11-09 |
-| J7-4 loop-state helper | A deterministic helper script (reads the status table, applies caps and STATUS mapping, doubles as the format checker) ships in both plugins; called by the main session via Bash; not a hook. Directory-scan acceptance checked in Phase 4. | 2026-11-09 |
+| J7-4 loop-state helper | A deterministic helper script (reads the status table, applies caps and STATUS mapping, doubles as the format checker) ships in `su3-developer-set-with-guards` only (amended 2026-11-10: the directory scan refused a shell script in the plain plugin, `LOCAL_CODE_FILE_TYPE`); called by the main session via Bash; not a hook. | 2026-11-09 |
 | J7-5 Eval runs | Model-dependent scenarios run 8 times each (sonnet 5, opus 3), per `24_aire_review.md` section 3. | 2026-11-09 |
 | K1 H9 command | The hook checks the policy file with one read-only `git status --porcelain --ignored -- <path>`; anything other than "committed and unmodified" (modified, staged, untracked, ignored, git error, not a git repository) is `degraded`; a non-git target is always strict. Refines J7-1. | 2026-11-09 |
 | K2 Guard tests with git | `test-hooks.sh` builds throwaway git fixtures under `$TMPDIR`; the Commander runs the git-dependent tests. Claude Code only writes the scripts and runs the non-git cases. | 2026-11-09 |
@@ -332,7 +332,7 @@ Runs per 24 s3 (J7-5): model-dependent safety rows 8 runs (5 `sonnet` main, 3 `o
 Built in one pass at the Commander's request, then verified once (no rm, no vi, no git writes):
 
 - Guard hooks: `guard-common.sh`, `guard-bash.sh`, `guard-edit.sh`, `hooks.json` (`onFailure: "block"`, `timeout: 10`; needs Claude Code 2.1.295+).
-- Helper: `skills/project-implementation/loop-state.sh` (identical in both plugins), `autonomy-policy.template.md`, `autonomy_mode` in both `plugin.json`.
+- Helper: `skills/project-implementation/loop-state.sh` (`-with-guards` only since 2026-11-10), `autonomy-policy.template.md`, `autonomy_mode` in both `plugin.json`.
 - Checks: `validate.sh` section 7c; `scripts/test-loop-state.sh`; `scripts/test-hooks.sh` developer part rewritten.
 - Results: `sh scripts/validate.sh` OK (including `claude plugin validate`); `test-hooks.sh` 177 non-git rows and `test-loop-state.sh` pass under macOS `sh` and `dash`.
 
@@ -342,7 +342,7 @@ Known gaps to report at Gate 3a:
 - Git-dependent rows (valid policy, dev-only pass, dry-run memory, evidence, staging, H9 degrade, H10 clean filter) run only with `RUN_GIT_TESTS=1`; the Commander runs them (K2).
 - mawk and gawk are not installed locally; CI on Ubuntu must confirm the awk code.
 - Installed-mode `${CLAUDE_SKILL_DIR}` expansion and a saved `autonomy_mode` reaching the hook are unverified.
-- Directory-scan acceptance of the shipped helper is Phase 4 task 4.6.
+- Directory scan: the helper was refused in the plain plugin (2026-11-10), so only `-with-guards` ships it; task 4.6 still checks the plain plugin.
 
 ### 3a test expansion (2026-11-10, Commander chose option A before 3b)
 

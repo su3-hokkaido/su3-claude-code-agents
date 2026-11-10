@@ -1,11 +1,11 @@
 #!/bin/sh
-# Tests for the loop-state helper (plugins/*/skills/project-implementation/loop-state.sh).
+# Tests for the loop-state helper (plugins/su3-developer-set-with-guards/skills/project-implementation/loop-state.sh).
 # Run by validate.sh. POSIX sh. Builds fixture unit directories from the examples of
 # 20_formats_spec.md under a private temp directory; touches no repository file and runs no git.
 
 set -u
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
-HELPER="$ROOT/plugins/su3-developer-set/skills/project-implementation/loop-state.sh"
+HELPER="$ROOT/plugins/su3-developer-set-with-guards/skills/project-implementation/loop-state.sh"
 FAILS=0
 TMPD=$(mktemp -d)
 trap 'rm -r "$TMPD"' EXIT INT TERM
@@ -476,9 +476,6 @@ sh "$HELPER" next "$UNIT" >/dev/null 2>&1
 sh "$HELPER" check-format "$UNIT" >/dev/null 2>&1
 after=$(find . -type f | sort | xargs cksum | cksum)
 [ "$before" = "$after" ] || fail "the helper changed files inside the repository"
-
-# ---- both variants carry the same helper ----------------------------------------------------------------------------------------------
-cmp -s "$HELPER" "$ROOT/plugins/su3-developer-set-with-guards/skills/project-implementation/loop-state.sh" || fail "helper differs between the two plugins"
 
 if [ "$FAILS" -gt 0 ]; then
   echo "loop-state tests: $FAILS failure(s)" >&2
