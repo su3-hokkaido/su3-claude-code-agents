@@ -1,6 +1,6 @@
 {
   "name": "su3-developer-set",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Subagents for the delivery pipeline: project management, architecture, development, SRE, AI reliability, QC and QA. No hooks.",
   "author": {
     "name": "su3-hokkaido"

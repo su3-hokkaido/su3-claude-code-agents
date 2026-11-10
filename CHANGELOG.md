@@ -6,6 +6,11 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 Nothing yet.
 
+## su3-developer-set 0.1.2 (2026-11-10)
+
+### Changed
+- The plugin no longer ships the `loop-state.sh` helper. The directory scan refuses shell scripts from non-Verified organizations (`LOCAL_CODE_FILE_TYPE`). The plain variant is now text rules only; `su3-developer-set-with-guards` keeps the helper.
+
 ## su3-developer-set 0.1.1 (2026-11-07)
 
 ### Changed

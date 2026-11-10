@@ -1,6 +1,6 @@
 # Anthropic directory: security scan findings and how we resolved them
 
-Date: 2026-11-06 to 2026-11-07. Scope: submitting the plugins of this marketplace to Anthropic's directory through the developer portal (`claude.ai/directory/manage`).
+Date: 2026-11-06 to 2026-11-10. Scope: submitting the plugins of this marketplace to Anthropic's directory through the developer portal (`claude.ai/directory/manage`).
 
 This note records what happened, what we found out, and what to do. It also separates what is **confirmed** by our own results from what is only **inferred**, because the directory does not publish its rules.
 
@@ -13,6 +13,7 @@ Japanese version: [`directory-security-scan_ja.md`](directory-security-scan_ja.m
   2. **Frontmatter keys outside an allowed list** (`LOCAL_CODE_FRONTMATTER_KEY`). The allowed list is not published and the finding does not name the key.
 - Fix for 1: ship the hook only in separate `-with-guards` plugins that stay on GitHub, and submit plain variants without hooks.
 - Fix for 2: found by bisecting with probe versions. **The agent frontmatter key `skills` is the cause.** `model`, `tools`, `argument-hint` and `disable-model-invocation` are accepted. Decision: remove `skills` from every agent (the plain plugins and their `-with-guards` variants) and write the needed skill text into the agent bodies (see [ADR 0001](../adr/0001-inline-skill-text-instead-of-agent-skills-key.md)). Released as 0.1.1 of all six plugins; the four plain plugins then **passed the security scan** and wait for the Anthropic reviewer.
+- **2026-11-10: 0.1.1 was refused automatically** with `LOCAL_CODE_FILE_TYPE`. A non-Verified organization may ship only Markdown, text, JSON, YAML and PNG/JPEG/GIF/WebP/ICO files, and files starting with `#!` are refused. The cause was the shell script `loop-state.sh` in the plain `su3-developer-set`. Fix: remove it from the plain plugin (0.1.2) and keep it in `su3-developer-set-with-guards`. The plain variant now follows the text rules only.
 - Before those two refusals, the portal's validation and scan also **blocked** two versions for harmless-looking text in the hook scripts. They are listed below because the same text patterns can come back.
 
 ## Timeline
@@ -29,6 +30,7 @@ Japanese version: [`directory-security-scan_ja.md`](directory-security-scan_ja.m
 | 2026-11-07 | Bisection with probe versions on branch `directory-probe` | Cause found (below). |
 | 2026-11-07 | Commander withdrew the three probe submissions in review; decision to inline skill text | ADR 0001. |
 | 2026-11-07 | Released 0.1.1 of all six plugins (skill text inlined, `disallowedTools` replaced by a `tools` allow-list, listing URLs added); tracked branch set back to `main`; `directory-probe` deleted | The four plain plugins passed the security scan and are awaiting the Anthropic reviewer. |
+| 2026-11-10 | Automatic refusal of `su3-developer-set` 0.1.1 | `LOCAL_CODE_FILE_TYPE` for `skills/project-implementation/loop-state.sh` (a `#!` shell script). Helper removed from the plain plugin; released as 0.1.2. |
 
 ## Finding 1: command hooks
 
@@ -127,11 +129,18 @@ Options that were considered for replacing the `skills` preload:
 | 2. Add the `Skill` tool to the agent's `tools` and tell it which skill to load | Keeps one copy of the text. Reviewer agents would no longer be read-only, because `Skill` is not a read tool. |
 | 3. Drop the preload | Simplest. Agents lose the standard report format and conventions unless the user asks for them. |
 
+## 2026-11-10: `LOCAL_CODE_FILE_TYPE`
+
+- Finding: a shell script (shebang) in a plain plugin. The scan allows only Markdown, text, JSON, YAML and PNG/JPEG/GIF/WebP/ICO files for non-Verified organizations.
+- Resolution: delete the plain copy; the `-with-guards` plugin (GitHub only) keeps the helper. `scripts/validate.sh` now exempts the helper from the base/guards parity check and fails any non-allowed file type or `#!` file in a plain plugin.
+- Warnings in the same report that need no action: the `icon.png` "downloads and runs code" warning is a false positive (URL strings in the PNG's XMP metadata), and the `plugin.json` listing-field warnings (`documentationUrl`, `privacyPolicyUrl`, `supportUrl`, `termsOfServiceUrl`) say "No action needed".
+
 ## Checklist for the next submission
 
 - Frontmatter of agents, skills, commands and output styles: only `name`, `description`, `model`, `tools`, `argument-hint`, `disable-model-invocation` are confirmed accepted. Anything else is a risk; test it with a probe version before relying on it.
 - `plugin.json` and `marketplace.json`: `author` as plain text or a name, email and url; `tags` and `keywords` as plain text values.
 - No `hooks/` in a plugin that goes to the directory.
+- No files other than Markdown, text, JSON, YAML and PNG/JPEG/GIF/WebP/ICO, and no `#!` files, in a plain plugin (enforced by `scripts/validate.sh`).
 - In scripts, avoid writes to a variable path, `..`, and redirects to fixed files, even inside regex or comments, until the scan is known to ignore them.
 - Use a probe branch and the portal's tracked-branch setting to experiment. Never publish a probe version.
 - The portal says there is no way to apply to become a Verified organization; revisit when that changes.

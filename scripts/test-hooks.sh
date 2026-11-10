@@ -202,7 +202,7 @@ guard "$DEV" $S 'cp x ~/.claude/plugins/cache/p/su3-developer-set/0.1.0/scripts/
 guard "$DEV" $S 'rm .git/index.lock' T3-PROTECT
 guard "$DEV" $S 'cat docs/policy/autonomy-policy.md' allow
 guard "$DEV" $S 'grep after-approval docs/policy/autonomy-policy.md' allow
-guard "$DEV" $S 'sh plugins/su3-developer-set/skills/project-implementation/loop-state.sh next docs/x' allow
+guard "$DEV" $S 'sh plugins/su3-developer-set-with-guards/skills/project-implementation/loop-state.sh next docs/x' allow
 
 # --- policy states and modes ---------------------------------------------------------------------
 # degraded policy (broken file): strict mode, the allow-list is empty

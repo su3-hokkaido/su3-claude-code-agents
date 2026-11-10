@@ -381,8 +381,9 @@ done
 
 # --- 7c. autonomy (Phase 3a) ------------------------------------------------------
 # Human-on-the-loop pieces of the developer-set plugins: the autonomy_mode option, files shared
-# byte for byte by a plugin and its -with-guards variant (loop-state helper, policy template), the
-# loop-state helper rules (20_formats_spec.md 9.4) and the hook registration (21_guard_spec.md 1.3).
+# byte for byte by a plugin and its -with-guards variant (policy template), the loop-state helper
+# (only in the -with-guards variant: the directory scan refuses shebang scripts in a plain plugin,
+# LOCAL_CODE_FILE_TYPE, so the plain variant is text rules only), the loop-state helper rules (20_formats_spec.md 9.4) and the hook registration (21_guard_spec.md 1.3).
 # Content checks of skills and agents (STATUS rule, autonomy block, phase-skill flags) belong to
 # Phase 3b and are added there.
 
@@ -397,12 +398,14 @@ for g in plugins/su3-developer-set-with-guards; do
   [ -d "$g" ] || continue
   b=plugins/su3-developer-set
   [ -d "$b" ] || continue
-  # Every non-SKILL.md file under skills/ exists in both variants and is byte-identical.
+  # Every non-SKILL.md file under skills/ exists in both variants and is byte-identical,
+  # except the loop-state helper, which only the -with-guards variant ships.
   for f in $(cd "$b" && find skills -type f ! -name SKILL.md | sort); do
     [ -f "$g/$f" ] || { err "$g/$f is missing (the base plugin has $b/$f)"; continue; }
     cmp -s "$b/$f" "$g/$f" || err "$g/$f differs from $b/$f (shared files must be byte-identical)"
   done
   for f in $(cd "$g" && find skills -type f ! -name SKILL.md | sort); do
+    [ "$f" = skills/project-implementation/loop-state.sh ] && continue
     [ -f "$b/$f" ] || err "$b/$f is missing (the guarded plugin has $g/$f)"
   done
   # Guard scripts and hook registration.
@@ -415,6 +418,21 @@ for g in plugins/su3-developer-set-with-guards; do
   jq -e '[.hooks.PreToolUse[] | select(.matcher == "Edit|Write|MultiEdit|NotebookEdit|Read") | .hooks[] | select(.onFailure == "block" and (.timeout | type == "number"))] | length == 1' "$h" >/dev/null 2>&1 \
     || err "$h: the file-tool matcher (Edit|Write|MultiEdit|NotebookEdit|Read) needs one hook with onFailure \"block\" and a numeric timeout"
   grep -q 'guard-edit.sh' "$h" || err "$h: guard-edit.sh is not registered"
+done
+# Plain plugins (no -with-guards suffix) ship only file types the directory scan accepts for
+# non-Verified organizations: md, txt, json, yml/yaml, png, jpg/jpeg, gif, webp, ico. No shebang
+# files, no shell scripts.
+for d in plugins/*/; do
+  p=$(basename "$d")
+  case "$p" in *-with-guards) continue ;; esac
+  for f in $(find "$d" -type f | sort); do
+    case "$f" in
+      *.md|*.txt|*.json|*.yml|*.yaml|*.png|*.jpg|*.jpeg|*.gif|*.webp|*.ico) ;;
+      *) err "$f: file type not accepted by the directory scan in a plain plugin (LOCAL_CODE_FILE_TYPE)" ;;
+    esac
+    case "$f" in *.sh) continue ;; esac
+    [ "$(head -c 2 "$f" 2>/dev/null)" = '#!' ] && err "$f: starts with a shebang (LOCAL_CODE_FILE_TYPE)"
+  done
 done
 # The loop-state helper: syntax, and no code from data (no eval, no sourcing; comment lines excluded).
 for f in plugins/*/skills/project-implementation/loop-state.sh; do
