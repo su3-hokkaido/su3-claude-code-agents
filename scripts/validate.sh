@@ -379,6 +379,54 @@ for f in plugins/*/scripts/*.sh scripts/*.sh; do
   sh -n "$f" 2>/dev/null || err "$f: shell syntax error"
 done
 
+# --- 7c. autonomy (Phase 3a) ------------------------------------------------------
+# Human-on-the-loop pieces of the developer-set plugins: the autonomy_mode option, files shared
+# byte for byte by a plugin and its -with-guards variant (loop-state helper, policy template), the
+# loop-state helper rules (20_formats_spec.md 9.4) and the hook registration (21_guard_spec.md 1.3).
+# Content checks of skills and agents (STATUS rule, autonomy block, phase-skill flags) belong to
+# Phase 3b and are added there.
+
+info "== Autonomy (developer-set)"
+for p in su3-developer-set su3-developer-set-with-guards; do
+  [ -d "plugins/$p" ] || continue
+  m="plugins/$p/.claude-plugin/plugin.json"
+  jq -e '.userConfig.autonomy_mode.type == "string" and (.userConfig.autonomy_mode.default == "interactive") and ((.userConfig.autonomy_mode | has("options")) | not)' "$m" >/dev/null 2>&1 \
+    || err "$m: userConfig.autonomy_mode must be a string option with default \"interactive\" and no options key"
+done
+for g in plugins/su3-developer-set-with-guards; do
+  [ -d "$g" ] || continue
+  b=plugins/su3-developer-set
+  [ -d "$b" ] || continue
+  # Every non-SKILL.md file under skills/ exists in both variants and is byte-identical.
+  for f in $(cd "$b" && find skills -type f ! -name SKILL.md | sort); do
+    [ -f "$g/$f" ] || { err "$g/$f is missing (the base plugin has $b/$f)"; continue; }
+    cmp -s "$b/$f" "$g/$f" || err "$g/$f differs from $b/$f (shared files must be byte-identical)"
+  done
+  for f in $(cd "$g" && find skills -type f ! -name SKILL.md | sort); do
+    [ -f "$b/$f" ] || err "$b/$f is missing (the guarded plugin has $g/$f)"
+  done
+  # Guard scripts and hook registration.
+  for s in guard-bash.sh guard-edit.sh guard-common.sh; do
+    [ -f "$g/scripts/$s" ] || err "$g/scripts/$s is missing"
+  done
+  h="$g/hooks/hooks.json"
+  jq -e '[.hooks.PreToolUse[] | select(.matcher == "Bash") | .hooks[] | select(.onFailure == "block" and (.timeout | type == "number"))] | length == 1' "$h" >/dev/null 2>&1 \
+    || err "$h: the Bash matcher needs one hook with onFailure \"block\" and a numeric timeout"
+  jq -e '[.hooks.PreToolUse[] | select(.matcher == "Edit|Write|MultiEdit|NotebookEdit|Read") | .hooks[] | select(.onFailure == "block" and (.timeout | type == "number"))] | length == 1' "$h" >/dev/null 2>&1 \
+    || err "$h: the file-tool matcher (Edit|Write|MultiEdit|NotebookEdit|Read) needs one hook with onFailure \"block\" and a numeric timeout"
+  grep -q 'guard-edit.sh' "$h" || err "$h: guard-edit.sh is not registered"
+done
+# The loop-state helper: syntax, and no code from data (no eval, no sourcing; comment lines excluded).
+for f in plugins/*/skills/project-implementation/loop-state.sh; do
+  [ -f "$f" ] || continue
+  sh -n "$f" 2>/dev/null || err "$f: shell syntax error"
+  bad=$(grep -nE '(^|[^a-z_])(eval|source)([^a-z_]|$)|^[[:space:]]*\.[[:space:]]' "$f" | grep -vE '^[0-9]+:[[:space:]]*#' || true)
+  [ -z "$bad" ] || err "$f: the helper must not use eval or source (no code from data): $bad"
+done
+if [ -f scripts/test-loop-state.sh ]; then
+  sh scripts/test-loop-state.sh || err "loop-state helper tests failed"
+fi
+
 # --- 8. official validator --------------------------------------------------
 
 info "== claude plugin validate"

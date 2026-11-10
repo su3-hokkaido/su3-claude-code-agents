@@ -26,6 +26,12 @@
       "title": "Allow concurrency",
       "description": "Let the sprint-plan, design-review and release-check commands run independent agent steps at the same time. Off by default: steps run one at a time, in order. You can also pass --parallel or --sequential to a single run.",
       "default": false
+    },
+    "autonomy_mode": {
+      "type": "string",
+      "title": "Autonomy mode",
+      "description": "interactive (default): a person is watching; blocked actions are reported and may ask you. unattended: nobody is watching; the agents never ask, they park blocked actions in 06_commander_actions.md and continue with other work. Any other value counts as interactive.",
+      "default": "interactive"
     }
   },
   "documentationUrl": "https://github.com/su3-hokkaido/su3-claude-code-agents/blob/main/README.md",
