@@ -50,7 +50,7 @@ None. The guard hook that denies or asks before data changes, live infrastructur
 `/su3-developer-set:project-implementation <tickets, a backlog file, or a description of the work>` runs a plan, design, implement, verify, report pipeline for each ticket and leaves the supervision to you. It is manual-only. The phases are also skills (`task-management`, `code-implementation`, `design-review`, `release-check`) that you or the model can start on their own.
 
 1. **Snapshot.** Each ticket becomes a directory `docs/<YYYY-MM-DD>_<NNN>_<slug>/` with `00_request.md` (the request and its acceptance criteria) and `01_project_plan.md` (status table, route, budget).
-2. **Route.** ``su3-project-manager`` plans, ``su3-qa`` writes the criteria, then the steps of the ticket's route run **one at a time, in order**: ``su3-system-architect`` (design), ``su3-app-developer`` (implement), ``su3-qc`` (verify), ``su3-sre`` and ``su3-aire`` where the route names them. A failed verify sends the work back to the author step; the retry cap (default 2 send-backs) and the budget come from the policy and are counted by a small shell helper (`skills/project-implementation/loop-state.sh`), not by the model.
+2. **Route.** ``su3-project-manager`` plans, ``su3-qa`` writes the criteria, then the steps of the ticket's route run **one at a time, in order**: ``su3-system-architect`` (design), ``su3-app-developer`` (implement), ``su3-qc`` (verify), ``su3-sre`` and ``su3-aire`` where the route names them. A failed verify sends the work back to the author step; the retry cap (default 2 send-backs) and the budget come from the policy and are applied by the main session by the written rules of `formats.md` (no helper script in this plain variant; only `su3-developer-set-with-guards` enforces the caps mechanically through a small shell helper).
 3. **Park and continue.** An agent never asks and never waits. An action it may not take becomes a Parked action block, and the ticket carries on with other work. At the end you find `05_completion_report.md` (what happened, what is open) and `06_commander_actions.md` (every parked or denied action, with command, dry-run result and rollback) in each ticket directory.
 4. **You decide.** You run or reject each item of `06`. Production work is always yours. Nothing is deployed, deleted or published by the loop.
 
@@ -110,11 +110,11 @@ Do these whatever variant you use, because a hook is a safety net, not a boundar
 
 - **R1** A determined or confused agent can get around a text-pattern guard (interpreters, scripts, indirection). The plain variant has text rules only.
 - **R2** A runaway loop inside one agent call is bounded only by a text rule and platform limits.
-- **R3** The main session runs the loop and may skip or misread the helper; use a strong model for it.
+- **R3** The main session runs the loop and applies the caps and verdicts by hand in this variant and may misjudge them; use a strong model for it, or use `su3-developer-set-with-guards`, whose helper counts them.
 - **R4** Commands, dry-run outputs and rollbacks in `06` are written by agents and only partly verified. Read them before you run them.
 - **R5** Agents keep their own bookkeeping: inconsistencies are detected, false claims are not. ``su3-qc`` re-runs checks independently.
 
-Minimum Claude Code version: 2.1.295 for the guard hooks and the loop (`set-language` needs 2.1.285). `${CLAUDE_SKILL_DIR}` expansion for the helper path in an installed plugin is not yet verified.
+Minimum Claude Code version: 2.1.295 for the guard hooks and the loop (`set-language` needs 2.1.285).
 
 ## Settings
 

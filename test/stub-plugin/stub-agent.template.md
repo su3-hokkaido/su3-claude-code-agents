@@ -1,5 +1,5 @@
 ---
-name: su3-@ROLE@
+name: su3-@ROLE@-with-guards
 description: Test stub for su3-@ROLE@. Returns a fixed hand-back from .stub/@ROLE@.txt. Never use outside loop tests.
 model: sonnet
 tools: Read, Write, Edit

@@ -303,6 +303,17 @@ info "== Guard variants"
 norm_variant() {
   sed 's/-with-guards//g' "$1" | grep -viE 'hook|Nothing blocks' || true
 }
+# Files whose text differs on purpose between su3-developer-set (no helper script, loop rules written as text)
+# and su3-developer-set-with-guards (loop-state.sh helper). Their helper handling is checked in section 6c.
+variant_diverges() {
+  case "$1" in
+    plugins/su3-developer-set/agents/su3-project-manager.md) return 0 ;;
+    plugins/su3-developer-set/skills/code-implementation/SKILL.md) return 0 ;;
+    plugins/su3-developer-set/skills/project-implementation/SKILL.md) return 0 ;;
+    plugins/su3-developer-set/skills/task-management/SKILL.md) return 0 ;;
+  esac
+  return 1
+}
 for g in plugins/*-with-guards; do
   [ -d "$g" ] || continue
   gp=$(basename "$g")
@@ -318,6 +329,8 @@ for g in plugins/*-with-guards; do
     base=$(basename "$f" .md)
     gf="$g/agents/${base}-with-guards.md"
     [ -f "$gf" ] || { err "$gf is missing (the base plugin has $f)"; continue; }
+    # Intentional divergence: the plain variant has no loop-state.sh helper and states the loop rules as text.
+    if variant_diverges "$f"; then continue; fi
     [ "$(norm_variant "$f")" = "$(norm_variant "$gf")" ] || err "$gf differs from $f beyond the variant suffix and guard-hook wording"
   done
   for gf in "$g"/agents/*.md; do
@@ -330,6 +343,7 @@ for g in plugins/*-with-guards; do
     sk=$(basename "$(dirname "$f")")
     gf="$g/skills/$sk/SKILL.md"
     [ -f "$gf" ] || { err "$gf is missing (the base plugin has $f)"; continue; }
+    if variant_diverges "$f"; then continue; fi
     [ "$(norm_variant "$f")" = "$(norm_variant "$gf")" ] || err "$gf differs from $f beyond the variant suffix and guard-hook wording"
   done
   for gf in "$g"/skills/*/SKILL.md; do
@@ -441,7 +455,11 @@ for d in plugins/su3-developer-set plugins/su3-developer-set-with-guards; do
     [ -f "$f" ] && { grep -q 'STATUS: ' "$f" || err "$f: must end its reply with a STATUS line (3b.6)"; }
   done
   # the helper and the formats file live in project-implementation only
-  [ -f "$d/skills/project-implementation/loop-state.sh" ] || err "$d: skills/project-implementation/loop-state.sh is missing"
+  # the helper ships only with -with-guards (the directory scan refuses shell scripts from non-Verified orgs)
+  case "$d" in
+    *-with-guards) [ -f "$d/skills/project-implementation/loop-state.sh" ] || err "$d: skills/project-implementation/loop-state.sh is missing" ;;
+    *) [ -e "$d/skills/project-implementation/loop-state.sh" ] && err "$d: must not contain loop-state.sh (helper is -with-guards only)" ;;
+  esac
   [ -f "$d/skills/project-implementation/formats.md" ] || err "$d: skills/project-implementation/formats.md is missing"
 done
 

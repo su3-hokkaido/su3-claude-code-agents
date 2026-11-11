@@ -23,8 +23,8 @@ Production, and any environment the command does not identify, is the Commander'
 | State | Meaning | What happens |
 |---|---|---|
 | valid | The file exists and its block parses | The policy applies. Record `- Policy: docs/policy/autonomy-policy.md` in the unit's plan |
-| missing | No file | Plugin defaults apply (they equal the template, with no environments). Say so |
-| degraded | Unreadable, a symlink, no block, two blocks, a bad line, or uncommitted changes | Strict mode: every loosening line is ignored, `forbid`, `reserve` and `protect` lines still apply. Report the reason and line number; do not fix the file |
+| missing | No file | Plugin defaults apply (they equal the template, with no environments). Say so. Record `- Policy: missing (plugin defaults apply)` |
+| degraded | Unreadable, a symlink, no block, two blocks, a bad line, or uncommitted changes | Strict mode: every loosening line is ignored, `forbid`, `reserve` and `protect` lines still apply. Report the reason and line number; do not fix the file. Record `- Policy: degraded (<reason>, line <n>) - strict mode` |
 
 ## Checks at the start (main session)
 
@@ -33,7 +33,7 @@ Run these once at the start of an implementation run; a phase skill started alon
 1. **Presence**: does the file exist as a regular file?
 2. **Import**: does the root `CLAUDE.md` (or `.claude/CLAUDE.md`) contain a line that is exactly `@docs/policy/autonomy-policy.md`, outside code blocks? If not, say so. In an interactive session offer to add it, after asking.
 3. **Validation**: check the block against the rules in the template's comments; report each failure with its line number, and report uncommitted policy changes as a warning.
-4. **Record**: write the state into each unit's plan `- Policy:` line, and hand the effective budgets (`retry-cap`, `overrun-percent`, `denial-cap`) to the project manager.
+4. **Record**: write the state into each unit's plan `- Policy:` line, and hand the effective budgets (`retry-cap`, `overrun-percent`, `denial-cap`) to the project manager. In every state read the template in this skill directory for the default values; do not guess them (state a value as unknown only if the template cannot be read).
 
 ## Creating the file
 
