@@ -27,6 +27,11 @@ Every agent loads the `report-format` skill (and others it needs) at startup, an
 | `report-format` | agents, automatic | Standard report: Summary, Done, Decisions, Open questions, Next. |
 | `coding-conventions` | agents, automatic | Generic coding defaults. A project's own rules win. |
 | `definition-of-done` | agents, automatic | Generic definition of done and quality-gate rules. A project's own rules win. |
+| `project-implementation` | `/su3-developer-set-with-guards:project-implementation <tickets, backlog file or description>` | The implementation loop above. Manual only. |
+| `task-management` | phase skill (`/su3-developer-set-with-guards:task-management <unit dir>`) | Writes `01_project_plan.md`: `su3-project-manager-with-guards` plans, `su3-qa-with-guards` sets criteria. |
+| `code-implementation` | phase skill | Runs the route and the verify loop for a unit. |
+| `autonomy-policy` | agents and main session, automatic | Explains the policy file; creates it from the template only in an interactive session after your yes. |
+| `safe-data-change` | agents, automatic | Dry-run first, rollback, never production. |
 | `sprint-plan` | `/su3-developer-set-with-guards:sprint-plan <goal or backlog> [--parallel\|--sequential]` | `su3-project-manager-with-guards` → `su3-system-architect-with-guards` (if needed) → `su3-aire-with-guards` (if AI) → `su3-qa-with-guards` → `su3-project-manager-with-guards`. |
 | `design-review` | `/su3-developer-set-with-guards:design-review <doc or description> [--parallel\|--sequential]` | `su3-system-architect-with-guards` summary → `su3-sre-with-guards`, `su3-aire-with-guards` (if AI), `su3-qa-with-guards` review → `su3-system-architect-with-guards` response → `su3-project-manager-with-guards` verdict. |
 | `release-check` | `/su3-developer-set-with-guards:release-check <scope> [--parallel\|--sequential]` | `su3-qa-with-guards` criteria → `su3-qc-with-guards` checks → `su3-sre-with-guards` readiness → `su3-aire-with-guards` (if AI) → `su3-qa-with-guards` gate → `su3-project-manager-with-guards` go/no-go. Never deploys. |
@@ -38,28 +43,87 @@ Concurrency is optional and off by default. Add `--parallel` to a run, or set `a
 
 ## Hook
 
-`hooks/hooks.json` registers one `PreToolUse` hook for Bash (`scripts/guard-bash.sh`). Policy: a su3-developer-set-with-guards subagent never changes production data or live infrastructure on its own, and never applies version upgrades without a human.
+See "What backs the rules up" below. A dry-run form that a data change needs first is remembered for the session in `/tmp/developer-set-guard-dry-runs`.
 
-| Class | Examples | Result |
+## The implementation loop (human on the loop)
+
+`/su3-developer-set-with-guards:project-implementation <tickets, a backlog file, or a description of the work>` runs a plan, design, implement, verify, report pipeline for each ticket and leaves the supervision to you. It is manual-only. The phases are also skills (`task-management`, `code-implementation`, `design-review`, `release-check`) that you or the model can start on their own.
+
+1. **Snapshot.** Each ticket becomes a directory `docs/<YYYY-MM-DD>_<NNN>_<slug>/` with `00_request.md` (the request and its acceptance criteria) and `01_project_plan.md` (status table, route, budget).
+2. **Route.** ``su3-project-manager-with-guards`` plans, ``su3-qa-with-guards`` writes the criteria, then the steps of the ticket's route run **one at a time, in order**: ``su3-system-architect-with-guards`` (design), ``su3-app-developer-with-guards`` (implement), ``su3-qc-with-guards`` (verify), ``su3-sre-with-guards`` and ``su3-aire-with-guards`` where the route names them. A failed verify sends the work back to the author step; the retry cap (default 2 send-backs) and the budget come from the policy and are counted by a small shell helper (`skills/project-implementation/loop-state.sh`), not by the model.
+3. **Park and continue.** An agent never asks and never waits. An action it may not take becomes a Parked action block, and the ticket carries on with other work. At the end you find `05_completion_report.md` (what happened, what is open) and `06_commander_actions.md` (every parked or denied action, with command, dry-run result and rollback) in each ticket directory.
+4. **You decide.** You run or reject each item of `06`. Production work is always yours. Nothing is deployed, deleted or published by the loop.
+
+### Modes
+
+The `autonomy_mode` option is `interactive` (default) or `unattended`. Interactive: a person is watching; a question is asked once and the answer is recorded. Unattended: nobody is watching; no question is ever asked, blocked work is parked, and a runaway loop stops at the retry cap or the budget. Only the exact value `unattended` (white space ignored) counts; anything else is interactive. Set it with `/plugin configure su3-developer-set-with-guards@su3-hokkaido-ai-ecosystem` (applies after a restart).
+
+### Risk tiers
+
+| Tier | What | Rule |
 |---|---|---|
-| Data changes | SQL writes through `psql`/`mysql`/..., `rails db:migrate`, `prisma migrate`, `alembic upgrade`, backfill and data-patch scripts, `aws s3 rm`, DynamoDB writes | Dry-run form (`--dry-run`, `--check`, or SQL ending in `ROLLBACK;`) is allowed and remembered for the session (in `/tmp/developer-set-guard-dry-runs`). The real command without an earlier matching dry-run is **denied**. After one, it **asks** you. Tools with no dry-run mode can only be run by you. |
-| Live infrastructure | `terraform apply/destroy`, `kubectl apply/delete`, `helm upgrade`, `pulumi up`, `ansible-playbook`, cloud deletes, deploy commands | Plan and dry-run forms are allowed. The real command **asks** you. |
-| Version upgrades | `npm update`, `npm audit fix`, `pip install -U`, `cargo update`, `apt upgrade`, `brew upgrade` | Dry-run forms are allowed. The real command **asks** you, because it may be a minor or major change. |
-| Other irreversible | force push, `git reset --hard`, broad `rm -rf`, pipe to shell, `chmod 777`, `sudo`, publish and release | **Asks** you. |
+| T0 | Reads and edits inside the project, tests, dry runs in dev | The agent does it. |
+| T1 | Routine writes to dev or staging that the policy lists as `without-approval` | The agent does it and records it. |
+| T2 | Data, schema, infrastructure, version, git, tracker and publishing actions; everything touching production or an unknown environment | Parked. For items the policy lists as `after-approval` (dev/staging only), an agent may run the exact approved item `A-NNN` of `06` once you approve it in an interactive session. Production is always run by you. |
+| T3 | Secrets and credentials, force push, anything the policy forbids | Never run, never approved. |
 
-Notes:
+### The policy file
 
-- A command that mentions `prod` or `production` gets that noted in the prompt.
-- In non-interactive runs (`claude -p`), an ask counts as a denial.
-- It does nothing in the main session or for other plugins' agents.
-- It is a safety net based on text patterns, not a security boundary. A reworded command can slip past it. Keep real production credentials out of the agent's environment.
-- It reads the hook input without `jq`. POSIX sh, macOS and Linux. Tests: `scripts/test-hooks.sh`.
+`docs/policy/autonomy-policy.md` (template: `skills/autonomy-policy/autonomy-policy.template.md`) holds a human part and one fenced `autonomy-policy` block: which environments are `dev`, `staging`, `production`, which actions need approval, budgets, `forbid:` and `reserve:` lines, `protect` paths. It can only make the plugin defaults stricter, plus the narrow loosenings the template lists. Import it in `CLAUDE.md` with the line `@docs/policy/autonomy-policy.md`. Agents never create or edit it; the main session creates it from the template only after you say yes. Protect it with `CODEOWNERS`. Without a policy file the defaults apply and every command that does not clearly target `dev` is treated as production.
+
+### What backs the rules up
+
+The `PreToolUse` hook (`hooks/hooks.json`, `scripts/guard-bash.sh` for Bash, `scripts/guard-edit.sh` for file edits and reads) acts only for this plugin's own subagents, reads the project policy and decides in this order: secrets and protected files (T3) → dry-run and plan forms in dev/staging (allowed) → forbidden → production or unknown environment (denied, even a dry run or a read, T2) → reserved or not on the allow-list, and git (denied) → dry-run first for data changes (a real run without an earlier dry run is denied) → dev-only actions → approved items (interactive: asks you; unattended: parked) → allow. In unattended mode an `ask` becomes a denial with a Parked action block. The edit guard also protects the policy, `CLAUDE.md` import lines, settings, hooks, scripts and secret files, and keeps each agent to the files of its own role in a run directory. Both hooks fail closed (`onFailure: "block"`). Tests: `scripts/test-hooks.sh` (git-dependent rows with `RUN_GIT_TESTS=1`, aws rows with `RUN_AWS_TESTS=1`).
+
+It is a text-pattern safety net, not a security boundary (R1). Expect **false positives**; each is denied or parked and shows up in `06`, never silently executed. Examples: SQL text inside a string literal (`SELECT 'delete from x'`) in dev needs a dry run first; a quoted word like `terraform apply` inside `echo "..." > notes.md` is read as a command (any shell operator turns off the plain-`echo` exemption); `echo $TOKEN_COUNT` counts as a secret read; `cat ~/.ssh/id_rsa.pub` is denied; `set -a; . ./.env` is denied; `git checkout` in a read-only investigation is denied; `non-prod` hosts count as production; `cat install.sh | sh` is denied. When a legitimate command is denied, the agent parks it and you run it. Misses (not detected) are listed in the guard spec, for example `curl` and `cat` against production logs; that is why no production credentials may be on the machine.
+
+Do these whatever variant you use, because a hook is a safety net, not a boundary:
+
+- **No production credentials on the machine where agents run**: no production database URL, no kube context or cloud profile that reaches production, not even a read-only role. This covers what any text-based guard cannot see.
+- **Database roles** for dev and staging without `DELETE`, `TRUNCATE`, `DROP` or DDL grants where the project allows it.
+- **`permissions.deny` rules** in `.claude/settings.json` (a hook never overrides a deny rule; the rules add to it). Example, adapt to the project:
+
+  ```json
+  {
+    "permissions": {
+      "deny": [
+        "Edit(/docs/policy/**)",
+        "Edit(/.claude/settings.json)",
+        "Edit(/.claude/settings.local.json)",
+        "Edit(/.git/**)",
+        "Read(.env)",
+        "Read(.env.*)",
+        "Read(!.env.example)",
+        "Read(**/*.pem)",
+        "Read(~/.ssh/**)",
+        "Bash(git push --force *)",
+        "Bash(git push -f *)",
+        "Bash(terraform apply *)",
+        "Bash(kubectl delete *)"
+      ]
+    }
+  }
+  ```
+
+  Limits: a Bash rule matches the text Claude writes and does not stop `/bin/rm`, `bash -c '...'` or `git -C . push`; `Read` rules apply to `Grep` and `Glob` on a best-effort basis; carve-outs (`!`) must come after the rule they carve from. Whether the rules apply to subagent calls exactly as to the main session is assumed, not yet verified. For rules that an agent or project cannot loosen, use managed settings. Connector (MCP) write tools are not covered by the Bash guard: add a `deny` entry per write tool (`mcp__<server>__<tool>`; syntax to be checked against the current permissions page).
+- **Sandboxing** where you need filesystem and network limits that do not depend on command text.
+
+### Known limits (accepted residual risks)
+
+- **R1** A determined or confused agent can get around a text-pattern guard (interpreters, scripts, indirection). The plain variant has text rules only.
+- **R2** A runaway loop inside one agent call is bounded only by a text rule and platform limits.
+- **R3** The main session runs the loop and may skip or misread the helper; use a strong model for it.
+- **R4** Commands, dry-run outputs and rollbacks in `06` are written by agents and only partly verified. Read them before you run them.
+- **R5** Agents keep their own bookkeeping: inconsistencies are detected, false claims are not. ``su3-qc-with-guards`` re-runs checks independently.
+
+Minimum Claude Code version: 2.1.295 for the guard hooks and the loop (`set-language` needs 2.1.285). `${CLAUDE_SKILL_DIR}` expansion for the helper path in an installed plugin is not yet verified.
 
 ## Settings
 
 | Option | Default | Description |
 |---|---|---|
 | `output_language` | `auto` | Reply language: `auto`, `en`, `ja` or any BCP-47 code. Change it with `/plugin configure su3-developer-set-with-guards@su3-hokkaido-ai-ecosystem` or `/su3-developer-set-with-guards:set-language`. Applies after a restart. |
+| `autonomy_mode` | `interactive` | `interactive` or `unattended` (see Modes). Change it with `/plugin configure su3-developer-set-with-guards@su3-hokkaido-ai-ecosystem`. |
 | `allow_concurrency` | `false` | Allow independent steps of the three commands to run at the same time. Off by default. |
 
 ## Prerequisites

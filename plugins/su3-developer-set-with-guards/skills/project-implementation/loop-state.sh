@@ -364,25 +364,32 @@ function gate_output(    n, A, i, ln, last, j, ok, st) {
   if (!ok) chk("03_development_output.md", last, "app-developer DONE without a Gate output fence whose first line starts with a dollar sign")
 }
 
-function qc_compare(s, val,    n, A, R, nrp, i, last, b0, b1, j, k, ln, m, rl, lastnb) {
+function vrows(X, lo, hi, V,    i, ln, c, m, n, inv) {
+  n = 0; inv = 0
+  for (i = lo; i <= hi; i++) {
+    ln = X[i]
+    if (ln ~ /^### /) { inv = (ln ~ /^### Verification[ \t]*$/); continue }
+    if (!inv || ln !~ /^[ \t]*\|/) continue
+    m = split(ln, c, "|")
+    if (m < 3) continue
+    if (trim(c[3]) == "" || trim(c[3]) == "Result" || trim(c[3]) ~ /^:?-+:?$/) continue
+    V[++n] = trim(c[2]) "|" trim(c[3])
+  }
+  return n
+}
+
+function qc_compare(s, val,    n, A, R, nrp, i, last, b0, b1, j, k, lastnb, V1, V2, n1, n2) {
   n = readfile(unit "/04_quality_report.md", A)
   last = 0
   for (i = 1; i <= n; i++) if (A[i] ~ /^## qc \(attempt [0-9]+\)$/) last = i
   if (last == 0) { chk("04_quality_report.md", 0, "no qc section was transcribed"); return }
   b0 = last + 1; b1 = n
   for (i = last + 1; i <= n; i++) if (A[i] ~ /^## /) { b1 = i - 1; break }
-  while (b0 <= b1 && trim(A[b0]) == "") b0++
-  while (b1 >= b0 && trim(A[b1]) == "") b1--
   nrp = readfile(report, R)
-  j = 1; k = nrp
-  while (j <= k && trim(R[j]) == "") j++
-  while (k >= j && trim(R[k]) == "") k--
-  if ((b1 - b0) != (k - j)) { chk("04_quality_report.md", last, "qc section differs from the saved report (length)"); return }
-  m = j
-  for (i = b0; i <= b1; i++) {
-    if (A[i] != R[m]) { chk("04_quality_report.md", i, "qc section differs from the saved report"); return }
-    m++
-  }
+  n1 = vrows(A, b0, b1, V1)
+  n2 = vrows(R, 1, nrp, V2)
+  if (n1 != n2) { chk("04_quality_report.md", last, "qc section has " n1 " Verification rows, the saved report has " n2); return }
+  for (i = 1; i <= n1; i++) if (V1[i] != V2[i]) { chk("04_quality_report.md", last, "qc Verification row " i " differs from the saved report: " V1[i] " against " V2[i]); return }
   lastnb = ""
   for (i = b1; i >= b0; i--) if (trim(A[i]) != "") { lastnb = trim(A[i]); break }
   if (lastnb != "STATUS: " val) chk("04_quality_report.md", b1, "qc section STATUS differs from the normalized STATUS " val)
