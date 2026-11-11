@@ -368,6 +368,83 @@ for f in plugins/*/agents/*.md; do
   [ "$block" = "$REF" ] || err "$f: Output Language block differs from $REF_FILE"
 done
 
+# --- 6b. Autonomy rules block consistency (3b.1) ----------------------------
+
+info "== Autonomy rules block"
+ACANON="scripts/autonomy-rules-block.md"
+[ -f "$ACANON" ] || err "$ACANON is missing"
+# The canonical text for one variant: @plain / @guards lines kept for their variant only (prefix removed)
+autonomy_canon() {
+  awk -v v="$1" '
+    /^@plain / { if (v == "plain") print substr($0, 8); next }
+    /^@guards / { if (v == "guards") print substr($0, 9); next }
+    { print }
+  ' "$ACANON" | awk '{ lines[NR] = $0 } END { n = NR; while (n > 0 && lines[n] ~ /^[ \t]*$/) n--; for (i = 1; i <= n; i++) print lines[i] }'
+}
+# The "# Autonomy rules" section of an agent, up to the next top-level heading, trailing blanks removed
+autonomy_block() {
+  awk '
+    $0 == "# Autonomy rules" { inb = 1 }
+    inb && $0 != "# Autonomy rules" && /^# / { inb = 0 }
+    inb { lines[++n] = $0 }
+    END { while (n > 0 && lines[n] ~ /^[ \t]*$/) n--; for (i = 1; i <= n; i++) print lines[i] }
+  ' "$1"
+}
+if [ -f "$ACANON" ]; then
+  APLAIN=$(autonomy_canon plain)
+  AGUARD=$(autonomy_canon guards)
+  for f in plugins/su3-developer-set/agents/*.md plugins/su3-developer-set-with-guards/agents/*.md; do
+    [ -f "$f" ] || continue
+    case "$f" in plugins/su3-developer-set-with-guards/*) want=$AGUARD ;; *) want=$APLAIN ;; esac
+    got=$(autonomy_block "$f")
+    if [ -z "$got" ]; then err "$f: no '# Autonomy rules' section"; continue; fi
+    [ "$got" = "$want" ] || err "$f: Autonomy rules block differs from $ACANON"
+    # the old "ask first, then wait" wording must be gone
+    if grep -qiE 'ask first|run the real command only after the Commander approves|report what you need and wait' "$f"; then
+      err "$f: old ask-and-wait guardrail wording is still present"
+    fi
+    # the block comes right before the Output Language block
+    order=$(grep -E '^(# Autonomy rules|# Output Language)$' "$f" | tr '\n' '|')
+    [ "$order" = "# Autonomy rules|# Output Language|" ] || err "$f: '# Autonomy rules' must come directly before '# Output Language'"
+  done
+fi
+
+# --- 6c. Phase skills (3b): flags per ADR 0003, helper path form, STATUS rule ----
+
+info "== Phase skills"
+for d in plugins/su3-developer-set plugins/su3-developer-set-with-guards; do
+  [ -d "$d/skills" ] || continue
+  # ADR 0003: manual-only entry points keep the flag; phase skills called through the Skill tool must not carry it
+  for sk in project-implementation sprint-plan; do
+    f="$d/skills/$sk/SKILL.md"
+    [ -f "$f" ] || { err "$f: missing"; continue; }
+    grep -q '^disable-model-invocation: true$' "$f" || err "$f: must keep disable-model-invocation: true (ADR 0003 entry point)"
+  done
+  for sk in task-management code-implementation design-review release-check; do
+    f="$d/skills/$sk/SKILL.md"
+    [ -f "$f" ] || { err "$f: missing"; continue; }
+    grep -q '^disable-model-invocation' "$f" && err "$f: must not carry disable-model-invocation (ADR 0003 phase skill)"
+  done
+  # helper path form (20 section 9.4 path rule): one copy, named through the skill directory
+  for f in "$d"/skills/*/SKILL.md; do
+    sk=$(basename "$(dirname "$f")")
+    case $sk in project-implementation) allowed='${CLAUDE_SKILL_DIR}/loop-state.sh' ;; *) allowed='${CLAUDE_SKILL_DIR}/../project-implementation/loop-state.sh' ;; esac
+    forms=$(grep -o '[^ `]*/loop-state\.sh' "$f" | sort -u)
+    [ -n "$forms" ] || continue
+    for form in $forms; do
+      [ "$form" = "$allowed" ] || err "$f: helper path '$form' is not the path-rule form '$allowed'"
+    done
+    grep -qF "$allowed" "$f" || err "$f: names the helper but not in the path-rule form $allowed"
+  done
+  for sk in design-review release-check; do
+    f="$d/skills/$sk/SKILL.md"
+    [ -f "$f" ] && { grep -q 'STATUS: ' "$f" || err "$f: must end its reply with a STATUS line (3b.6)"; }
+  done
+  # the helper and the formats file live in project-implementation only
+  [ -f "$d/skills/project-implementation/loop-state.sh" ] || err "$d: skills/project-implementation/loop-state.sh is missing"
+  [ -f "$d/skills/project-implementation/formats.md" ] || err "$d: skills/project-implementation/formats.md is missing"
+done
+
 # --- 7b. hook scripts ---------------------------------------------------------
 
 info "== Hook scripts"

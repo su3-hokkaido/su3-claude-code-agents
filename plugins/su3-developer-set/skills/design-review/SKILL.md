@@ -1,8 +1,7 @@
 ---
 name: design-review
-description: Review a design document or architecture proposal with su3-developer-set agents. Use when the user runs /su3-developer-set:design-review with a design doc path or a description.
+description: Review a design document or architecture proposal with su3-developer-set agents. Use when the user runs /su3-developer-set:design-review with a design doc path or a description, or when project-implementation calls it for a unit.
 argument-hint: <design doc path or description> [--parallel|--sequential]
-disable-model-invocation: true
 ---
 
 # Design review
@@ -10,6 +9,10 @@ disable-model-invocation: true
 Input: `$ARGUMENTS` (a path to a design document or ADR, or a description of the design). If it is empty, ask the Commander what to review, then stop.
 
 You run this in the main session. The reviewers only read. Give each one the design and the relevant code paths.
+
+## Called or started alone
+
+If the arguments name an existing unit directory (`docs/<YYYY-MM-DD>_<NNN>_<slug>/`, passed by `project-implementation` or another skill), the design to review is its `02_system_design.md` and the request is `00_request.md`. Read `- Mode:` and `- Policy:` from its `01_project_plan.md`; do not run the policy checks again and do not ask. Write nothing into the unit directory: return the result to the caller, which records it. Otherwise this skill was started alone: use the input as described above, and decide the mode from `${user_config.autonomy_mode}` (it is `unattended` only when the value, with all white space removed, is exactly `unattended`; anything else is `interactive`). In an unattended run never ask a question in chat. The agents never ask and never wait; they put questions under Open questions.
 
 ## Order and concurrency
 
@@ -32,3 +35,5 @@ Remove `--parallel` and `--sequential` from the arguments before you use the res
 Write everything you show the Commander in the output language configured for this plugin: `${user_config.output_language}`. If that value is `auto`, empty, or not a language code, use the language of the Commander's message. Code, file paths and agent names stay as they are.
 
 Show the Commander the verdict, the required changes and the open questions. Do not change the design document yourself. If the Commander wants the updates written, delegate that to `su3-developer-set:su3-system-architect`.
+
+End your reply with exactly one line, plain, as its last line: `STATUS: DONE` (approve, or approve with changes), `STATUS: PARTIAL` (rework) or `STATUS: NEEDS_HUMAN_INPUT` (a decision only the Commander can give). No bold, backticks, quotes or period.

@@ -1,7 +1,7 @@
 # 02. Project plan: human-on-the-loop design upgrade
 
 - Date: 2026-11-09
-- Status: Phase 2 closed 2026-11-10 (ADR 0002/0003 Accepted); Phase 3a in progress: 3a.0, 3a.1, 3a.3 done; 3a.4 (helper), 3a.2 (guards), 3a.5, 3a.6 built 2026-11-10 (files written end to end, then verified once; see the 3a build note in section 10); next 3a.7 (qc verification, review notes, report). (Plan approved 2026-11-09; Phase 1 done 2026-11-09, findings in `10_spike_findings.md`; Phase 2 specs `20`-`24` written, revised and re-reviewed, QA verdict conditional pass, `23_qa_review.md` "Second pass".)
+- Status: Phase 3a closed (Gate 3a OK 2026-11-10); Phase 3b built 2026-11-10 (3b.0 to 3b.8 written; `validate.sh` passes; loop skills and stub harness not yet run, see the 3b build note in section 10); waiting for the Commander's OK on the 3b report (Gate 3b) before Phase 4.
 - Input: `01_brainstorming.md` (same directory)
 - Affected plugins: `su3-developer-set`, `su3-developer-set-with-guards` (other plugins out of scope, see Q7; the product-owner redesign is a separate project)
 
@@ -350,3 +350,39 @@ Known gaps to report at Gate 3a:
 - Rows that need a committed policy file (valid state) run only with `RUN_GIT_TESTS=1` (K2). Degraded and missing states, the edit guard, `PATH` without git and the stub-git case run everywhere.
 - Bugs found while expanding the tests and fixed in the guards: `forbid: cmd=` and `reserve: cmd=` were not checked for commands without a pattern hit; the edit guard did not resolve symlinks for a new file in a new directory (macOS `/var` to `/private/var`).
 - Spec inconsistencies found (spec text not changed; recorded in the tests): S04 lists `git add .env.example` as `none`, but git writes are `T2-GIT` (G01); M09 lists the dev write as `ask`, but the dev-only level (J1) allows it after a dry run; M17's shape regex excludes a backslash, but the messages contain `\n` escapes, so the test allows `\n`.
+
+### 3b build note (2026-11-10)
+
+- 3b.0: `test/stub-plugin/` (build script, stub agent template, README). Builds a plugin named `su3-developer-set` with the real skills and stub agents reading `.stub/<role>.txt`. Location confirmed by the Commander. Build script checked; no loop run yet (Phase 4, L01 to L13).
+- 3b.1 to 3b.6: agent text with the canonical block (14 agents), `autonomy-policy` and `safe-data-change` skills, `task-management`, `code-implementation`, `project-implementation`, `design-review` and `release-check` edited. **Decision made by the main session, for the Commander to confirm:** `design-review` and `release-check` treat unit directories as read-only and end with a `STATUS:` line.
+- 3b.7: READMEs of both plugins (loop, modes, tiers, policy, backing measures, deny-rule example, R1 to R5, false positives, minimum version 2.1.295) and the root README. The MCP deny-rule syntax and subagent applicability of deny rules are marked unverified in the text.
+- 3b.8: `validate.sh` sections 6b and 6c are on; the full run is green.
+- Not verified: G3b-2 sample runs, G3b-3 and G3b-4 transcript checks, G3b-5 (qc following the README), installed-mode `${CLAUDE_SKILL_DIR}`, `mawk`/`gawk`.
+
+### Phase 4 pilot runs with the stub harness (2026-11-10 and 2026-11-11; one run per scenario, Commander's decision)
+
+Setup: `test/stub-plugin/build.sh`, `claude --plugin-dir`, model `sonnet` for the main session, stub agents on `haiku`, throwaway directories under the session scratchpad, no git, interactive mode only (`${user_config.autonomy_mode}` does not expand with `--plugin-dir`, so unattended scenarios such as L08 cannot run this way).
+
+| Run | Scenario | Result | Finding |
+|---|---|---|---|
+| L01 (a) | retry cap | not reached | Helper bug: `qc_compare` did not skip the saved report's own `## qc (attempt n)` heading. Fixed in both plugins, test added to `test-loop-state.sh`. |
+| L01 (b) | retry cap | not reached | The second `project-manager` transcription call had no `formats.md` path and wrote the invalid status value `FAIL`. Fixed: every dispatch prompt names `formats.md` by absolute path and the 9.2 mapping. |
+| L01 (c) | retry cap | inconclusive | A stub `qc` call stalled for 10 minutes with no output (environment, not a skill result). |
+| L01 (d) | retry cap | not reached | The planner's `Estimate` (6) did not cover a full retry cap, so the budget stop came first. Fixed: new Estimate rule in `formats.md` section 3 and in `task-management`. |
+| L01 (e) | retry cap | not reached | Stopped with `conflicting-artifacts` at the first `qc` step: the stub `project-manager` did not copy the saved `qc` report verbatim (3762 vs 1519 characters). The helper stopped as designed. |
+| L04 | invalid STATUS | pass | `STOP reason=invalid-status`, no re-ask, `STOP` item, `PARKED`, `05` written; the new Estimate rule held (13 / 20). |
+
+Open design point for the Commander: the byte-for-byte transcription of the `qc` report by a `project-manager` call is fragile (it failed in 3 of 4 runs, twice because of the stub). Options are listed in the Phase 4 report.
+
+Update 2026-11-11 (after the Commander's decisions: transcription check on result cells only, stub agents on `sonnet`, stop at L06):
+
+| Run | Scenario | Result | Finding |
+|---|---|---|---|
+| L01 (f) | retry cap | not reached | A sonnet `project-manager` stub changed one line of the `qc` report; the word-for-word check stopped the loop. Decision (Commander): `loop-state.sh` now compares only the `Criterion` and `Result` cells of `### Verification` and the `STATUS:` line (`formats.md` section 6 and 9.4 updated, tests added). |
+| L01 (g) | retry cap | **pass** | 3 `qc` sections, 2 send-back rows, unit `PARKED`, `STOP` item "retry cap", route `qc` `Result` `NEEDS_HUMAN_INPUT`, `05` written. Used 12 of Stop at 20. |
+| L03 (a) | status row not updated | **pass** | Stopped at step 2 (`qa` did not update its row; unplanned but the same rule): `STOP` item "status row not updated by step 2", unit `PARKED`, no fix, no re-dispatch. |
+| L06 | T2 on the critical path | **pass** | A `PARKED` (T2 item A-001), B `BLOCKED` (`blocked by: TST-A`), C `DONE`; the final message lists all three. Finding: the main session rewrote the `qa` section of A's `01` itself after `check-format` rejected a table, instead of the specified send-back (own report called it out). |
+| L02 | budget overrun | covered, not run alone | The budget stop was seen live in L01 (d) (Used 9 of 9, no dispatch beyond, `STOP` item); helper fixtures cover the arithmetic. |
+| L08 and other unattended rows | | not runnable | `${user_config.autonomy_mode}` does not expand with `--plugin-dir`; needs an installed plugin (Commander). |
+
+Not run in this session: L03 (b to d), L05, L07, L09, L10, L12, L13, A15, A21, A23, S01 to S19 (4.3), `aire` review (4.5), directory scan (4.6), quality gate (4.7). Usage note: each run cost about 1 to 3.5 USD in Claude Code's own estimate (Pro plan: it counts against the usage allowance, not a bill).
