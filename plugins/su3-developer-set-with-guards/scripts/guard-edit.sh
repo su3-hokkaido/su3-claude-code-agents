@@ -35,7 +35,7 @@ load_mode
 ENVLBL=na
 
 T3_HINT='This is never run by an agent and never approved inside the loop.'
-PROT_WHAT='changing a guard-defining or protected file (policy, hooks, settings, .git/, plugin helper scripts and skills such as loop-state.sh, protected path), or writing a run-directory file that your role does not own (an unknown role owns none)'
+PROT_WHAT='changing a guard-defining or protected file (policy, hooks, settings, CLAUDE.md, .mcp.json, .claude/agents, skills or commands, .git/, plugin agents, helper scripts and skills such as loop-state.sh, protected path), or writing a run-directory file that your role does not own (an unknown role owns none)'
 PROT_ALT='Do not edit it. Describe the change you need under Open questions, or put the text in your report for the owner of the file; only the Commander edits the guard-defining files.'
 SECRET_WHAT='reading or writing a secret (env file, key file, credentials, environment dump)'
 SECRET_ALT='Refer to the value by its variable name, read .env.example for the list of variables, and report that the Commander must put the value in the environment.'
@@ -107,9 +107,11 @@ else
   case $PL in */docs/policy/*) protect_deny ;; esac
 fi
 case $PL in
-  */.claude/settings*|*/.claude/hooks/*) protect_deny ;;
+  */.claude/settings*|*/.claude/hooks/*|*/.claude/agents/*|*/.claude/skills/*|*/.claude/commands/*) protect_deny ;;
+  */.mcp.json) protect_deny ;;
 esac
-if printf '%s' "$PL" | grep -Eiq 'su3-developer-set(-with-guards)?/([^/]+/)?(hooks|scripts|skills)/'; then protect_deny; fi
+[ "$BASE" = claude.md ] && protect_deny
+if printf '%s' "$PL" | grep -Eiq 'su3-developer-set(-with-guards)?/([^/]+/)?(hooks|scripts|skills|agents|\.claude-plugin)/'; then protect_deny; fi
 [ "$BASE" = loop-state.sh ] && protect_deny
 case $RELL in .git/*) protect_deny ;; esac
 case $PL in */.git/*) protect_deny ;; esac

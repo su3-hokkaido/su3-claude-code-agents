@@ -200,6 +200,12 @@ guard "$DEV" $S 'sed -i s/a/b/ plugins/su3-developer-set-with-guards/skills/proj
 guard "$DEV" $S 'chmod +x docs/x/LOOP-STATE.SH' T3-PROTECT
 guard "$DEV" $S 'cp x ~/.claude/plugins/cache/p/su3-developer-set/0.1.0/scripts/y.sh' T3-PROTECT
 guard "$DEV" $S 'rm .git/index.lock' T3-PROTECT
+guard "$DEV" $S 'echo x > CLAUDE.md' T3-PROTECT
+guard "$DEV" $S 'sed -i s/a/b/ .claude/agents/x.md' T3-PROTECT
+guard "$DEV" $S 'echo x > plugins/su3-developer-set-with-guards/agents/x.md' T3-PROTECT
+guard "$DEV" $S 'cp x .mcp.json' T3-PROTECT
+guard "$DEV" $S 'cat CLAUDE.md' allow
+guard "$DEV" $S 'grep x .claude/agents/x.md' allow
 guard "$DEV" $S 'cat docs/policy/autonomy-policy.md' allow
 guard "$DEV" $S 'grep after-approval docs/policy/autonomy-policy.md' allow
 guard "$DEV" $S 'sh plugins/su3-developer-set-with-guards/skills/project-implementation/loop-state.sh next docs/x' allow
@@ -249,15 +255,29 @@ eguard "$E" "$DEV" Write "$E/.claude/settings.json" T3-PROTECT
 eguard "$E" "$DEV" Write "$E/.claude/settings.local.json" T3-PROTECT
 eguard "$E" "$DEV" Write "$E/.claude/hooks/x.sh" T3-PROTECT
 eguard "$E" "$DEV" Write "$E/.git/hooks/pre-commit" T3-PROTECT
+eguard "$E" "$DEV" Write "$E/plugins/su3-developer-set-with-guards/agents/su3-qc-with-guards.md" T3-PROTECT
+eguard "$E" "$DEV" Write "$E/plugins/su3-developer-set/agents/x.md" T3-PROTECT
+eguard "$E" "$DEV" Write "$E/plugins/su3-developer-set/.claude-plugin/plugin.json" T3-PROTECT
+eguard "$E" "$DEV" Write "$E/CLAUDE.md" T3-PROTECT
+eguard "$E" "$DEV" Write "$E/sub/CLAUDE.md" T3-PROTECT
+eguard "$E" "$DEV" Write "$E/.claude/agents/x.md" T3-PROTECT
+eguard "$E" "$DEV" Write "$E/.claude/skills/x/SKILL.md" T3-PROTECT
+eguard "$E" "$DEV" Write "$E/.claude/commands/x.md" T3-PROTECT
+eguard "$E" "$DEV" Write "$E/.mcp.json" T3-PROTECT
+eguard "$E" "$DEV" Write "$HOME/.claude/CLAUDE.md" T3-PROTECT
+eguard "$E" "$DEV" Read "$E/CLAUDE.md" allow
+eguard "$E" "$DEV" Read "$E/.claude/agents/x.md" allow
+eguard "$E" "$DEV" Read "$E/.mcp.json" allow
+eguard "$E" "$DEV" Read "$E/plugins/su3-developer-set/agents/x.md" allow
 eguard "$E" "$DEV" Write "$E/plugins/su3-developer-set-with-guards/scripts/guard-bash.sh" T3-PROTECT
 eguard "$E" "$DEV" Write "$E/plugins/su3-developer-set-with-guards/hooks/hooks.json" T3-PROTECT
 eguard "$E" "$DEV" Write "$E/plugins/su3-developer-set-with-guards/skills/x/SKILL.md" T3-PROTECT
 eguard "$E" "$DEV" Write "$E/plugins/su3-developer-set/skills/x/SKILL.md" T3-PROTECT
 eguard "$E" "$DEV" Write "/home/u/.claude/plugins/cache/mk/su3-developer-set-with-guards/0.2.0/scripts/g.sh" T3-PROTECT
 eguard "$E" "$DEV" Write "$E/tmp/loop-state.sh" T3-PROTECT
-eguard "$E" "$DEV" Write "$E/plugins/su3-developer-set-with-guards/agents/x.md" allow
+eguard "$E" "$DEV" Write "$E/plugins/su3-developer-set-with-guards/agents/x.md" T3-PROTECT
 eguard "$E" "$DEV" Write "$E/docs/policy-notes/x.md" allow
-eguard "$E" "$DEV" Write "$E/CLAUDE.md" allow
+eguard "$E" "$DEV" Write "$E/CLAUDE.md" T3-PROTECT
 eguard "$E" "$DEV" Write "$E/.env" T3-SECRET
 eguard "$E" "$DEV" Write "$E/config/deploy.pem" T3-SECRET
 eguard "$E" "$DEV" Write "$E/infra/terraform.tfstate" T3-SECRET

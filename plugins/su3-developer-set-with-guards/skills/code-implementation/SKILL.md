@@ -1,12 +1,14 @@
 ---
 name: code-implementation
-description: Run the steps of a planned unit one agent at a time - author, independent verification, send-back, report - with caps and budget checked by a script. Use when a unit directory has a plan and its steps need to be carried out.
+description: Run the steps of a planned unit one agent at a time - author, independent verification, send-back, report - with caps and budget checked by a script. Use only when project-implementation calls it for a unit or the user asks for it, to carry out the steps of a planned unit directory.
 argument-hint: <unit directory>
 ---
 
 # Code implementation
 
 Carries out the route in a unit directory's `01_project_plan.md` from the first step that is not done, until the unit is finished, parked or stopped. The formats, the status mapping and the loop rules are in `${CLAUDE_SKILL_DIR}/../project-implementation/formats.md` (sections 3, 9, 10 and 11). You run this in the main session.
+
+**Caller check.** If neither the user's current message nor `project-implementation` asked for this skill, stop and say so; do nothing else.
 
 Input: `$ARGUMENTS` (a unit directory, repository-relative). If it names no existing unit directory with a plan, run `task-management` first (it checks the policy and the mode itself).
 

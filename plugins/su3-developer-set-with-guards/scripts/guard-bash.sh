@@ -44,7 +44,7 @@ CWD=$(json_field cwd)
 CMD=$(printf '%s' "$CMD" | sed -e 's/\\n/ ; /g; s/\\[tr]/ /g; s/\\"/"/g')
 
 # --- prefilter ---------------------------------------------------------------
-TRIGGERS='psql|mysql|mariadb|sqlite3|mongo|redis-cli|cqlsh|clickhouse|sqlcmd|pg_restore|pg_dump|rails|rake|prisma|alembic|flyway|liquibase|knex|manage\.py|django-admin|sequelize|typeorm|dbmate|goose|atlas|sqitch|diesel|sqlx|ecto|backfill|data.?patch|fix.?data|aws|gcloud|az |bq |gsutil|terraform|tofu|terragrunt|kubectl|helm|pulumi|ansible|docker|cdk|sam |serverless|sls |firebase|fly|heroku|wrangler|netlify|vercel|npm|pnpm|yarn|npx|ncu|pip|poetry|uv |cargo|go get|bundle|composer|pub |gem|brew|apt|yum|dnf|softwareupdate|gh |jira|acli|curl|wget|twine|mvn|gradle|dotnet|vsce|ovsx|ssh-keygen|openssl|vault|gpg|git|rm |chmod|sudo|printenv|env|export|/proc/|\.env|\.pem|\.key|\.p12|\.pfx|\.jks|\.keystore|\.tfstate|id_|\.ssh|\.aws|\.gnupg|\.kube|\.docker|\.netrc|\.pgpass|master\.key|credentials|docs/policy|\.claude/|su3-developer-set-with-guards|su3-developer-set/|loop-state|\|[[:space:]]*(sudo[[:space:]]+)?(sh|bash|zsh|dash|ksh)|echo|printf|>'
+TRIGGERS='psql|mysql|mariadb|sqlite3|mongo|redis-cli|cqlsh|clickhouse|sqlcmd|pg_restore|pg_dump|rails|rake|prisma|alembic|flyway|liquibase|knex|manage\.py|django-admin|sequelize|typeorm|dbmate|goose|atlas|sqitch|diesel|sqlx|ecto|backfill|data.?patch|fix.?data|aws|gcloud|az |bq |gsutil|terraform|tofu|terragrunt|kubectl|helm|pulumi|ansible|docker|cdk|sam |serverless|sls |firebase|fly|heroku|wrangler|netlify|vercel|npm|pnpm|yarn|npx|ncu|pip|poetry|uv |cargo|go get|bundle|composer|pub |gem|brew|apt|yum|dnf|softwareupdate|gh |jira|acli|curl|wget|twine|mvn|gradle|dotnet|vsce|ovsx|ssh-keygen|openssl|vault|gpg|git|rm |chmod|sudo|printenv|env|export|/proc/|\.env|\.pem|\.key|\.p12|\.pfx|\.jks|\.keystore|\.tfstate|id_|\.ssh|\.aws|\.gnupg|\.kube|\.docker|\.netrc|\.pgpass|master\.key|credentials|docs/policy|\.claude/|su3-developer-set-with-guards|su3-developer-set/|loop-state|\|[[:space:]]*(sudo[[:space:]]+)?(sh|bash|zsh|dash|ksh)|echo|printf|>|\.mcp\.json|claude\.md|mv |cp |ln |install |touch |tee |sed |perl |rsync|patch |truncate|dd |unlink'
 
 # A command with no trigger word or no pattern hit can still match a project "cmd=" line
 # (forbid or reserve, any environment, 21 s6). Only when a policy file exists and names one.
@@ -149,7 +149,7 @@ fi
 
 # --- protected paths written from Bash (3.8): row 1 ------------------------------
 WRITE_VERB='(>|>>|(^|[[:space:];&|])tee[[:space:]]|sed[[:space:]]+(-[a-zA-Z]*i)|perl[[:space:]]+-[a-zA-Z]*i|(^|[[:space:];&|])(mv|cp|rm|ln|install|chmod|chown|truncate|dd|touch|rsync|unlink|patch)[[:space:]]|git[[:space:]]+(checkout|restore|rm|mv|apply|stash))'
-PROT_FIXED='docs/policy/|(^|[^a-z0-9])\.claude/(settings|hooks/)|su3-developer-set(-with-guards)?/([^/]+/)?(hooks|scripts|skills)/|loop-state\.sh|(^|[[:space:]/"'"'"'=])\.git/'
+PROT_FIXED='docs/policy/|(^|[^a-z0-9])\.claude/(settings|hooks/|agents/|skills/|commands/)|(^|[^a-z0-9_.-])\.mcp\.json|(^|[^a-z0-9_.-])claude\.md|su3-developer-set(-with-guards)?/([^/]+/)?(hooks|scripts|skills|agents|\.claude-plugin)/|loop-state\.sh|(^|[[:space:]/"'"'"'=])\.git/'
 CMD_W=$(printf '%s' "$CMD" | sed -E 's/2>&1//g; s/>[[:space:]]*\/dev\/null//g')
 if printf '%s' "$CMD_W" | grep -Eiq "$WRITE_VERB"; then
   PROT_HIT=0
@@ -160,7 +160,7 @@ if printf '%s' "$CMD_W" | grep -Eiq "$WRITE_VERB"; then
     if [ -n "$GB_PP" ] && match_any "$CMD_W" "$GB_PP"; then PROT_HIT=1; fi
   fi
   if [ "$PROT_HIT" -eq 1 ]; then
-    deny T3-PROTECT T3 'changing a guard-defining or protected file (policy, hooks, settings, .git/, plugin helper scripts and skills such as loop-state.sh, protected path)' 'Do not edit it. Describe the change you need under Open questions, or put the text in your report for the owner of the file; only the Commander edits the guard-defining files.' "$T3_HINT $ESC_HINT"
+    deny T3-PROTECT T3 'changing a guard-defining or protected file (policy, hooks, settings, CLAUDE.md, .mcp.json, .claude/agents, skills or commands, .git/, plugin agents, helper scripts and skills such as loop-state.sh, protected path)' 'Do not edit it. Describe the change you need under Open questions, or put the text in your report for the owner of the file; only the Commander edits the guard-defining files.' "$T3_HINT $ESC_HINT"
   fi
 fi
 

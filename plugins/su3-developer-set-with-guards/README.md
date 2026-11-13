@@ -116,6 +116,7 @@ Do these whatever variant you use, because a hook is a safety net, not a boundar
 - **R4** Commands, dry-run outputs and rollbacks in `06` are written by agents and only partly verified. Read them before you run them.
 - **R5** Agents keep their own bookkeeping: inconsistencies are detected, false claims are not. ``su3-qc-with-guards`` re-runs checks independently.
 - **R6** A version upgrade written as a pinned version (for example `npm install pkg@5.0.0`) is not recognized as an upgrade by the text rules; only moving forms such as `update`, `upgrade` and `@latest` are. Review dependency changes in the diff.
+- **R7** The guard hook does not resolve `$VAR` references from the policy file's `env:` lines (for example `$DEV_DATABASE_URL`). A command that names such a variable is treated as production and fails safe: data changes need a dry-run first and then ask the human. Write the literal target in the command if you want it classified as dev.
 
 Minimum Claude Code version: 2.1.295 for the guard hooks and the loop (`set-language` needs 2.1.285). `${CLAUDE_SKILL_DIR}` expansion for the helper path in an installed plugin is not yet verified.
 
