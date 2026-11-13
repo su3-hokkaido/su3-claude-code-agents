@@ -113,6 +113,7 @@ Do these whatever variant you use, because a hook is a safety net, not a boundar
 - **R3** The main session runs the loop and applies the caps and verdicts by hand in this variant and may misjudge them; use a strong model for it, or use `su3-developer-set-with-guards`, whose helper counts them.
 - **R4** Commands, dry-run outputs and rollbacks in `06` are written by agents and only partly verified. Read them before you run them.
 - **R5** Agents keep their own bookkeeping: inconsistencies are detected, false claims are not. ``su3-qc`` re-runs checks independently.
+- **R6** A version upgrade written as a pinned version (for example `npm install pkg@5.0.0`) is not recognized as an upgrade by the text rules; only moving forms such as `update`, `upgrade` and `@latest` are. Review dependency changes in the diff.
 
 Minimum Claude Code version: 2.1.295 for the guard hooks and the loop (`set-language` needs 2.1.285).
 
