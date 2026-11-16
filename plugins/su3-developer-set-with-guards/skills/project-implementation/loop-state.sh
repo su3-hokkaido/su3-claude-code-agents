@@ -3,6 +3,7 @@
 #
 # Usage:
 #   sh loop-state.sh check-format <unit-dir>
+#   sh loop-state.sh ac-hash <unit-dir>
 #   sh loop-state.sh next <unit-dir> [--save-before <file>]
 #   sh loop-state.sh next <unit-dir> --step <n> --report <file> [--before <file>]
 #
@@ -19,6 +20,7 @@
 
 usage() {
   echo "usage: loop-state.sh check-format <unit-dir>" >&2
+  echo "       loop-state.sh ac-hash <unit-dir>" >&2
   echo "       loop-state.sh next <unit-dir> [--save-before <file>]" >&2
   echo "       loop-state.sh next <unit-dir> --step <n> --report <file> [--before <file>]" >&2
   exit 2
@@ -103,7 +105,7 @@ function load01(    i, ln, sec, sub3, c, n, t, v) {
   if (nl < 0) return 0
   sec = ""; sub3 = ""; nh = 0; nr = 0; st_n = 0; nsk = 0; nqc = 0
   b_retry = -1; b_over = -1; b_den = -1; b_est = -1; b_stop = -1; b_used = -1; used_line = 0
-  p_mode = "interactive"; p_mode_raw = ""; p_policy = ""; p_route = ""; p_route_line = 0
+  p_mode = "interactive"; p_mode_raw = ""; p_policy = ""; p_route = ""; p_route_line = 0; p_ac = ""; p_ac_line = 0
   hdr_status = ""; hdr_route = ""; qa_last = ""; qa_present = 0
   st_status = ""; st_retries_raw = ""; st_tier = ""; st_last = ""; st_line = 0; st_ticket = ""
   for (i = 1; i <= nl; i++) {
@@ -115,6 +117,7 @@ function load01(    i, ln, sec, sub3, c, n, t, v) {
         v = ln; sub(/^- Mode:/, "", v); p_mode_raw = trim(v); gsub(/[ \t\r]/, "", v)
         p_mode = (v == "unattended") ? "unattended" : "interactive"
       } else if (ln ~ /^- Policy:/) { v = ln; sub(/^- Policy:[ \t]*/, "", v); p_policy = trim(v) }
+      else if (ln ~ /^- AC hash:/) { v = ln; sub(/^- AC hash:[ \t]*/, "", v); p_ac = trim(v); p_ac_line = i }
       continue
     }
     if (sec == "Status" || sec == "Route") {
@@ -428,6 +431,9 @@ function main_next(    i) {
       chk("01_project_plan.md", r_line[i], "route row " i " has an unknown agent or kind"); finish("STOP", "unknown-situation", "", "", "")
     }
   }
+  if (p_ac != "" && p_ac ~ /^[0-9]+$/ && ENVIRON["LS_AC"] != "" && ENVIRON["LS_AC"] != p_ac) {
+    chk("00_request.md", 0, "acceptance criteria changed after planning (recorded AC hash " p_ac ", now " ENVIRON["LS_AC"] ")"); stop_conflict("", "")
+  }
   if (report != "") post_dispatch()
   decide()
 }
@@ -594,6 +600,7 @@ function check01(    F, i, hs, ev, ts, mx, tn, key, seq, variants, nv, ok, v, s,
   for (i = 1; i <= nh; i++) hs = hs (i > 1 ? "|" : "") H[i]
   if (hs != "Status|Route|Budget|Skipped|Quality criteria" && hs != "Status|Skipped") ff(F, (nh > 0 ? HL[1] : 1), "heading-order: " hs)
   if (p_mode_raw != "interactive" && p_mode_raw != "unattended") ff(F, 1, "mode-line " p_mode_raw)
+  if (p_ac_line > 0 && p_ac !~ /^[0-9]+$/) ff(F, p_ac_line, "ac-hash-line")
   if (p_policy != "docs/policy/autonomy-policy.md" && p_policy !~ /^docs\/policy\/autonomy-policy\.md \(degraded: .+\)$/ && p_policy != "None (plugin defaults)") ff(F, 1, "policy-line")
   if (hdr_status != "| Ticket | Status | Retries | Riskiest tier | Last update |") ff(F, 1, "status-table-header")
   if (st_n != 1) ff(F, 1, "status-table-needs-one-row")
@@ -802,7 +809,22 @@ BEGIN { main_check() }
 # ---------------------------------------------------------------------------
 # Dispatch
 # ---------------------------------------------------------------------------
+# Checksum of the acceptance-criteria lines of 00_request.md (empty when there is none).
+ac_hash() {
+  [ -f "$UNIT/00_request.md" ] || return 0
+  awk '
+    /^## / { sec = substr($0, 4); sub(/[ \t\r]+$/, "", sec); next }
+    sec == "Acceptance Criteria" && /^- AC-[0-9]+: / { sub(/[ \t\r]+$/, ""); print }
+  ' "$UNIT/00_request.md" | cksum | cut -d ' ' -f 1
+}
+
 case $CMD in
+  ac-hash)
+    [ -z "$STEP$REPORT$BEFORE$SAVE" ] || usage
+    [ -f "$UNIT/00_request.md" ] || { echo "loop-state: cannot read 00_request.md in $UNIT" >&2; exit 2; }
+    ac_hash
+    exit 0
+    ;;
   next)
     if [ -n "$REPORT" ] || [ -n "$STEP" ] || [ -n "$BEFORE" ]; then
       [ -n "$REPORT" ] && [ -n "$STEP" ] || usage
@@ -828,7 +850,7 @@ case $CMD in
           echo "loop-state: --save-before path must be outside the repository" >&2; exit 2 ;;
       esac
     fi
-    OUT=$(LS_UNIT=$UNIT LS_STEP=$STEP LS_REPORT=$REPORT LS_BEFORE=$BEFORE awk "$LIB$NEXT_PROG")
+    OUT=$(LS_UNIT=$UNIT LS_STEP=$STEP LS_REPORT=$REPORT LS_BEFORE=$BEFORE LS_AC=$(ac_hash) awk "$LIB$NEXT_PROG")
     RC=$?
     [ "$RC" -eq 0 ] || exit 2
     [ -n "$OUT" ] || exit 2

@@ -23,8 +23,8 @@ Production, and any environment the command does not identify, is the Commander'
 | State | Meaning | What happens |
 |---|---|---|
 | valid | The file exists and its block parses | The policy applies. Record `- Policy: docs/policy/autonomy-policy.md` in the unit's plan |
-| missing | No file | Plugin defaults apply (they equal the template, with no environments). Say so. Record `- Policy: missing (plugin defaults apply)` |
-| degraded | Unreadable, a symlink, no block, two blocks, a bad line, or uncommitted changes | Strict mode: every loosening line is ignored, `forbid`, `reserve` and `protect` lines still apply. Report the reason and line number; do not fix the file. Record `- Policy: degraded (<reason>, line <n>) - strict mode` |
+| missing | No file | Plugin defaults apply (they equal the template, with no environments). Say so. Record `- Policy: None (plugin defaults)` |
+| degraded | Unreadable, a symlink, no block, two blocks, a bad line, or uncommitted changes | Strict mode: every loosening line is ignored, `forbid`, `reserve` and `protect` lines still apply. Report the reason and line number; do not fix the file. Record `- Policy: docs/policy/autonomy-policy.md (degraded: <reason>, line <n>)` |
 
 ## Checks at the start (main session)
 

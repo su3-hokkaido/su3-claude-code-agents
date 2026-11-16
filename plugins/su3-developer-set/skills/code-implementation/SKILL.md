@@ -27,7 +27,7 @@ Repeat until the verdict is `PARK`, `STOP` or `END`. One agent at a time; wait f
    |---|---|
    | `CONTINUE` | Back to step 2 with the step it names (a send-back re-runs the author step, then the verify step). |
    | `PARK` | Write one `06` item for each Parked action block in the report (`formats.md` section 8: kind, fields, `Raised by`, `Blocks`), copying the block text; interactive and `reason=question`: ask the Commander once and record the question and answer as a `QUESTION` item with `Status: DONE`, then continue; unattended: do not ask. Return to the caller. |
-   | `STOP` | Call `su3-developer-set:su3-project-manager` once (stop call: status row `PARKED`, event per `formats.md` 9.2), write a `STOP` item naming the reason and the failed checks, and return to the caller. Units that depend on this one become `BLOCKED`. |
+   | `STOP` | Call `su3-developer-set:su3-project-manager` once (stop call, given the unit directory and the absolute path `${CLAUDE_SKILL_DIR}/../project-implementation/formats.md` with sections 3, 9 and 10, because the subagent may be unable to find the file itself: status row `PARKED`, event per `formats.md` 9.2), write a `STOP` item naming the reason and the failed checks, and return to the caller. Units that depend on this one become `BLOCKED`. |
    | `END` | The unit is finished. Return to the caller. |
    The main session applies the stop rules (retry cap, budget, conflicting artifacts, denial cap, invalid STATUS, unknown situation) from the plan's `## Budget`, the policy and `formats.md` section 9.2. Never raise a cap or a budget, and never skip a check.
 

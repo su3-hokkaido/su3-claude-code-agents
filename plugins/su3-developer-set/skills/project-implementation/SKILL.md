@@ -29,7 +29,7 @@ Run the steps strictly in order. Call one agent at a time, wait for its complete
 
 **S3. Per unit, in dependency order.** Call the `task-management` skill with the unit directory as its argument, then the `code-implementation` skill with the same argument. They read the mode and policy from the unit's `01` header. After a `PARK` or `STOP`, go on with the next unit that does not depend on it. A skill that runs only some steps, or none, is not a reason to ask: record what happened and go on.
 
-**S4. End.** The run ends when no unit is `TODO`, `IN_PROGRESS` or `VERIFY`. Every unit touched gets a completion report `05` (the `project-manager` report step; a parked or stopped unit gets one from a closing call that is counted in `Used` even past `Stop at`). Then write the final message.
+**S4. End.** The run ends when no unit is `TODO`, `IN_PROGRESS` or `VERIFY`. Every unit touched gets a completion report `05` (the `project-manager` report step; a parked or stopped unit gets one from a closing call that is counted in `Used` even past `Stop at`). Every `project-manager` call in this loop (report step, closing call, stop call) is given the unit directory and the absolute path `${CLAUDE_SKILL_DIR}/formats.md` with the section numbers it needs (3, 9 and 10 for the status row and event, the report section for `05`), because a subagent does not inherit this skill's directory and may be unable to find the file by itself. Then write the final message.
 
 ## Rules for the main session
 

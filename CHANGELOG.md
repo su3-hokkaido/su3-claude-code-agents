@@ -6,6 +6,22 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 Nothing yet.
 
+## su3-developer-set 0.2.0 (2026-11-16)
+
+### Added
+- Human-on-the-loop upgrade: `project-implementation` loop with an autonomy policy (`autonomy-policy` skill), per-ticket budget, retry cap, PARK and STOP rules, and `06_commander_actions.md` for items that wait for the Commander. Text rules only (no helper script in this variant).
+
+### Changed
+- `code-implementation`, `project-implementation` and `formats.md` updated for the loop; verified with stub-agent pilots L01 to L13 and safety scenarios S01 to S19 (see `docs/2026-11-09_01_human_on_loop_design_upgrade/`).
+
+## su3-developer-set-with-guards 0.2.0 (2026-11-16)
+
+### Added
+- Same human-on-the-loop upgrade as `su3-developer-set 0.2.0`, plus the `loop-state.sh` helper (`check-format`, `ac-hash`, `next`) and its protection by the Bash and Edit guards (T3-PROTECT).
+
+### Changed
+- Guards hardened after the `aire` review: protected `agents/` and `.claude-plugin/`, stricter `guard-bash.sh`, caller checks.
+
 ## su3-developer-set 0.1.2 (2026-11-10)
 
 ### Changed
