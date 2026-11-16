@@ -1,49 +1,50 @@
-# create-pr — プルリクエスト作成
+# create-pr — Create a pull request
 
-実装差分を PR にまとめるスキルです。**このマシンでは Claude は git の書き込み操作（add/commit/push/PR作成）を実行しません**。差分を要約し PR 本文を用意したうえで、実行コマンドをユーザーに提示します。
+This skill packages an implementation diff into a PR. **On this machine Claude does not run git write operations (add/commit/push/PR creation).** Summarize the diff, prepare the PR body, then give the user the commands to run.
 
-## 進め方
+## Steps
 
-1. **差分を確認する（読み取りのみ）。**
-   - `git status` / `git diff` / `git log --oneline main..HEAD` で変更内容とコミットを把握する。
-2. **ブランチ命名を確認する。** `feature/内容の要約` になっているか（`CLAUDE.md` §3-3）。なっていなければユーザーに切り直しを提案する。
-3. **PR 本文（日本語）を作成する。** 下記テンプレに沿ってドラフトする。関連する設計書（`.claude/documents/.../design.md`）があればリンクする。
-4. **実行手順を提示する。** 未コミットの変更があれば、コミット/プッシュ/PR作成の各コマンドを提示し、**ユーザーに実行を依頼する**（Claude は実行しない）。
+1. **Review the diff (read-only).**
+   - Use `git status`, `git diff` and `git log --oneline main..HEAD` to understand the changes and commits.
+2. **Check the branch name.** It should be `feature/<summary>` (`CLAUDE.md` §3-3). If not, suggest that the user recreate the branch.
+3. **Write the PR body in Japanese.** Draft it from the template below. Link the related design document (`.claude/documents/.../design.md`) if there is one.
+4. **Present the commands.** If there are uncommitted changes, present the commit, push and PR-creation commands and **ask the user to run them** (Claude does not run them).
 
-## PR 本文テンプレート
+## PR body template
+
+The PR body is written in Japanese, so keep the headings below as they are.
 
 ```markdown
 ## 概要
-（何を・なぜ変更したか。1〜3行）
+(What changed and why. 1-3 lines, in Japanese)
 
 ## 変更内容
-- （主な変更を箇条書き）
+- (Main changes as bullets)
 
 ## 動作確認
-- （テスト結果・手動確認の内容。失敗は正直に記載）
+- (Test results and manual checks. Report failures honestly)
 
 ## 影響範囲 / 注意点
-- （レビュアーが見るべき点、破壊的変更の有無、要フォロー事項）
+- (What reviewers should look at, whether there are breaking changes, follow-ups needed)
 
 ## 関連
 - 設計書: .claude/documents/{...}/design.md
 - 計画書: plan_20260703.md §X
 ```
 
-## ユーザーに依頼するコマンド例
+## Example commands to ask the user to run
 
 ```bash
-git switch -c feature/{要約}   # 未作成の場合
+git switch -c feature/{summary}   # if the branch does not exist yet
 git add -A
-git commit -m "{要約}"
-git push -u origin feature/{要約}
-gh pr create --base main --title "{要約}" --body-file <本文>
+git commit -m "{summary}"
+git push -u origin feature/{summary}
+gh pr create --base main --title "{summary}" --body-file <body file>
 ```
 
-## 注意
+## Notes
 
-- **Claude は上記 git/gh の書き込み系を実行しない。** 必ずユーザーに実行を依頼する。
-- 本リポジトリには `.git-pr-release` があり、リリース PR 運用が存在し得る。通常の機能 PR とリリース PR を混同しない。
-- force push・`git reset --hard`・`git rebase` は使わない（guard.sh でもブロック）。
-- 絵文字は使わない。
-
+- **Claude does not run the git/gh write commands above.** Always ask the user to run them.
+- The repository has a `.git-pr-release` file, so a release-PR workflow may exist. Do not confuse a normal feature PR with a release PR.
+- Do not use force push, `git reset --hard` or `git rebase` (guard.sh also blocks them).
+- Do not use emoji.
