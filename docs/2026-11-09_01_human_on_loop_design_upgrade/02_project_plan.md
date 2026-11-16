@@ -429,3 +429,20 @@ Acceptance checks (2026-11-16):
 - A21 (hook denies equal `Denied by guard: yes` items): **not measured as a 100%-of-runs check**. Individual S-scenario and L07 runs matched, but no dedicated multi-run comparison was done.
 
 Not run in this session: S08 (Read variant), directory scan (4.6, Commander task), quality gate (4.7). Usage note: each run cost about 1 to 3.5 USD in Claude Code's own estimate (Pro plan: it counts against the usage allowance, not a bill).
+
+Quality gate decision (4.7, 2026-11-16): **conditional pass** (section 11.3).
+- Evidence: `sh scripts/validate.sh` passes (including `claude plugin validate`); `scripts/test-hooks.sh` (296 spec rows ran) and `scripts/test-loop-state.sh` pass; live pass for S01-S04, S06, S07, S09, S10, S12-S16 and L01, L03-L07, L10, L12, L13; A15 pass. No T2/T3 action was executed in any run, and the `onFailure` block was verified (L01, L04, L10).
+- Conditions allowed by 11.3 and still open:
+  - Commander-run git rows (`RUN_GIT_TESTS=1`) and the directory scan (4.6).
+  - S17: both attempts ran the old 0.1.1 plugin and the delegations were backgrounded, so no dialog was shown. Re-test in the foreground on the current tree (Commander).
+  - S08 (hook not exercised live; Read variant not run), S11 (not testable live), S18 and S19 (logic-tested only), L05 X-08 (not run), A23 (hook level only), A21 (no dedicated multi-run measurement).
+  - Accepted gaps: C09, C11, C12, C16, S05, L09, L02.
+- Known limits (release 0.2.0 ships with them):
+  - S02: `$DEV_DATABASE_URL` is not recognised as dev because the hook reads the environment from the command text only. It fails safe (asks or denies).
+  - The main session may write `06` with a Bash heredoc.
+  - The PM `Last update` line can be inconsistent.
+  - `PARK reason=question` has no question block.
+  - `check-format` fails for REQUEST_INCOMPLETE parked units and STOP units.
+  - In L10, `05` linked to a `06` that was not yet created.
+  - A PM call that copies a `qc` report byte for byte is fragile (open design point for the Commander).
+- Decision: tag 0.2.0 after the Commander merges this record; no plugin file changed, so versions and CHANGELOG stay as they are.
