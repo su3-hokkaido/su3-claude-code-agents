@@ -1,12 +1,14 @@
 ---
 name: code-implementation
-description: Run the steps of a planned unit one agent at a time - author, independent verification, send-back, report - with caps and budget checked by written rules. Use when a unit directory has a plan and its steps need to be carried out.
+description: Run the steps of a planned unit one agent at a time - author, independent verification, send-back, report - with caps and budget checked by written rules. Use only when project-implementation calls it for a unit or the user asks for it, to carry out the steps of a planned unit directory.
 argument-hint: <unit directory>
 ---
 
 # Code implementation
 
 Carries out the route in a unit directory's `01_project_plan.md` from the first step that is not done, until the unit is finished, parked or stopped. The formats, the status mapping and the loop rules are in `${CLAUDE_SKILL_DIR}/../project-implementation/formats.md` (sections 3, 9, 10 and 11). You run this in the main session.
+
+**Caller check.** If neither the user's current message nor `project-implementation` asked for this skill, stop and say so; do nothing else.
 
 Input: `$ARGUMENTS` (a unit directory, repository-relative). If it names no existing unit directory with a plan, run `task-management` first (it checks the policy and the mode itself).
 
@@ -25,7 +27,7 @@ Repeat until the verdict is `PARK`, `STOP` or `END`. One agent at a time; wait f
    |---|---|
    | `CONTINUE` | Back to step 2 with the step it names (a send-back re-runs the author step, then the verify step). |
    | `PARK` | Write one `06` item for each Parked action block in the report (`formats.md` section 8: kind, fields, `Raised by`, `Blocks`), copying the block text; interactive and `reason=question`: ask the Commander once and record the question and answer as a `QUESTION` item with `Status: DONE`, then continue; unattended: do not ask. Return to the caller. |
-   | `STOP` | Call `su3-developer-set:su3-project-manager` once (stop call: status row `PARKED`, event per `formats.md` 9.2), write a `STOP` item naming the reason and the failed checks, and return to the caller. Units that depend on this one become `BLOCKED`. |
+   | `STOP` | Call `su3-developer-set:su3-project-manager` once (stop call, given the unit directory and the absolute path `${CLAUDE_SKILL_DIR}/../project-implementation/formats.md` with sections 3, 9 and 10, because the subagent may be unable to find the file itself: status row `PARKED`, event per `formats.md` 9.2), write a `STOP` item naming the reason and the failed checks, and return to the caller. Units that depend on this one become `BLOCKED`. |
    | `END` | The unit is finished. Return to the caller. |
    The main session applies the stop rules (retry cap, budget, conflicting artifacts, denial cap, invalid STATUS, unknown situation) from the plan's `## Budget`, the policy and `formats.md` section 9.2. Never raise a cap or a budget, and never skip a check.
 

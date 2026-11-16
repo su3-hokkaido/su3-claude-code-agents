@@ -245,7 +245,7 @@ PROJ-12 Soft delete users. Deleting must be reversible ...
 
 ### (a) Purpose, writer, reader
 
-The state of the unit and the dispatch plan. `project-manager` writes the header, the initial `## Status` row, `## Route` (the dispatch plan), `## Budget` (except `- Used:`) and `## Skipped`. `qa` writes `## Quality criteria`. Each step agent writes its own cells (below). The main session writes `- Used:`. Read by the main session and the helper (what to dispatch next, stop checks, resume; the `- Mode:` and `- Policy:` lines, section 11.3), by every step agent (its step, its criterion and the cells it must update; agents do not read or act on `- Mode:`, they are mode-agnostic, 24 AI-32), and by the Commander (P1 Watch).
+The state of the unit and the dispatch plan. `project-manager` writes the header, the initial `## Status` row, `## Route` (the dispatch plan), `## Budget` (except `- Used:`) and `## Skipped`. `qa` writes `## Quality criteria`. Each step agent writes its own cells (below). The main session writes `- Used:` and the `- AC hash:` line (after `check-format` passes, `task-management` step 3: the value printed by `loop-state.sh ac-hash <unit-dir>`; it is recorded once and never rewritten by an agent). Read by the main session and the helper (what to dispatch next, stop checks, resume; the `- Mode:` and `- Policy:` lines, section 11.3), by every step agent (its step, its criterion and the cells it must update; agents do not read or act on `- Mode:`, they are mode-agnostic, 24 AI-32), and by the Commander (P1 Watch).
 
 **Bookkeeping (Commander decision 1 / S1, 2026-11-09; replaces the earlier "only `project-manager` edits the status table" rule):**
 
@@ -264,6 +264,7 @@ The state of the unit and the dispatch plan. `project-manager` writes the header
 - Directory: docs/<YYYY-MM-DD>_<NNN>_<slug>/
 - Request: 00_request.md
 - Mode: <interactive | unattended>
+- AC hash: <cksum of the 00 acceptance criteria lines, digits only>
 - Policy: <docs/policy/autonomy-policy.md | docs/policy/autonomy-policy.md (degraded: <reason>) | None (plugin defaults)>
 
 ## Status
@@ -350,6 +351,7 @@ Field rules:
 - Directory: docs/2026-11-12_002_add_soft_delete_to_users/
 - Request: 00_request.md
 - Mode: unattended
+- AC hash: 1234567890
 - Policy: docs/policy/autonomy-policy.md
 
 ## Status
@@ -411,7 +413,7 @@ Invalid when:
 - `Riskiest tier` is not the maximum `Tier` of the unit's rows.
 - `Status` contradicts the route: `DONE` with a step not `DONE`/`PASS`/`SKIPPED`; `PARKED` without an `OPEN` `06` item that is named in `Last update` (`parked: A-NNN`) or whose `Blocks` is the step named there (`parked: step <#>`), or, for `budget stop`, an `OPEN` `STOP` item naming the budget; `VERIFY` when the next step is not `verify`.
 - After a step returned, its `Result` or the status row differs from the 9.2 mapping for its STATUS line, or `Last update` does not name that step (bookkeeping rules 4 and 5).
-- `Retry cap`, `Overrun` or `Denial cap` is looser than the plugin default (2, 150%, 2) or differs from the policy's valid `budget:` line; `Stop at` is not `ceil(Estimate * Overrun / 100)`; the `- Policy:` line is not one of the three forms.
+- `Retry cap`, `Overrun` or `Denial cap` is looser than the plugin default (2, 150%, 2) or differs from the policy's valid `budget:` line; `Stop at` is not `ceil(Estimate * Overrun / 100)`; the `- Policy:` line is not one of the three forms; an `- AC hash:` line, when present, is not digits only (`ac-hash-line`).
 - `Used` is greater than `Stop at` while `Status` is not `PARKED` or `DONE`.
 - A file that does not exist in the directory is neither produced by a pending step nor listed under `## Skipped`.
 - An `AC-<n>` from `00` is missing from `## Quality criteria` (once step `criteria` is `DONE`).
@@ -1138,6 +1140,7 @@ Why this form: all skills of one plugin sit side by side under the plugin's `ski
 
 ```text
 sh <skill-dir>/loop-state.sh check-format <unit-dir>
+sh <skill-dir>/loop-state.sh ac-hash <unit-dir>
 sh <skill-dir>/loop-state.sh next <unit-dir> [--save-before <file>]
 sh <skill-dir>/loop-state.sh next <unit-dir> --step <#> --report <file> [--before <file>]
 ```
@@ -1160,7 +1163,7 @@ VERDICT: <CONTINUE | PARK | STOP | END> reason=<token> [step=<#>] [agent=<role>]
 |---|---|---|
 | `CONTINUE` | Dispatch `step=<#>` to `agent=<role>` as `attempt=<n>`. | Increment `Used`, dispatch (the `--before` copy was already written by this call's `--save-before`); nothing else. |
 | `PARK` | The unit waits for the Commander (`reason=blocked`, `human-step`, `question`, `parked`, `dependency`). | Write the `06` items from the report's blocks (section 8), continue with other units. |
-| `STOP` | A stop rule fired (`reason=retry-cap`, `budget`, `denial-cap`, `conflicting-artifacts`, `invalid-status`, `unknown-situation`). | One `project-manager` stop call, a `STOP` item naming the reason and the `CHECK:` lines, continue with other units. |
+| `STOP` | A stop rule fired (`reason=retry-cap`, `budget`, `denial-cap`, `conflicting-artifacts` (this includes acceptance criteria of `00` that changed after planning), `invalid-status`, `unknown-situation`). | One `project-manager` stop call, a `STOP` item naming the reason and the `CHECK:` lines, continue with other units. |
 | `END` | The unit is finished (status `DONE` and `05` written). | Next unit. |
 
 Information lines (fixed English keys): `STATUS_RAW:` (the raw last line), `STATUS:` (normalized value or `BLOCKED`), `NEXT:`, `USED:`, `STOP_AT:`, `RETRIES:`, `ATTEMPTS: <step>=<completed>/<aborted>`, `DENIALS: <step>=<n>`, `MODE:`, `POLICY:`, and one `CHECK: FAIL <file>:<line> <rule>` line per failed check. `check-format` prints `FORMAT: FAIL <file>:<line> <rule>` lines and ends with `VERDICT: CONTINUE reason=format-ok` or `VERDICT: STOP reason=format-invalid count=<n>`.
@@ -1169,12 +1172,12 @@ Information lines (fixed English keys): `STATUS_RAW:` (the raw last line), `STAT
 
 **What `next` computes** (normative; every rule is defined elsewhere in this spec, the helper only executes it):
 
-1. Without `--report` (before a dispatch, and on resume): the next-step rule (3(b)), aborted attempts (9.2), budget (`Used + 1` versus `Stop at`), denial count (3(b) "Denial cap"), retry cap (`Retries` versus `Retry cap`), dependency state. Mode from `- Mode:` with the rule of 11.2. With `--save-before` and a `CONTINUE` verdict, it writes the copy (Interface).
+1. Without `--report` (before a dispatch, and on resume): the next-step rule (3(b)), aborted attempts (9.2), budget (`Used + 1` versus `Stop at`), denial count (3(b) "Denial cap"), retry cap (`Retries` versus `Retry cap`), dependency state. Mode from `- Mode:` with the rule of 11.2. AC change: when `01` has an `- AC hash:` line, `next` recomputes the hash of the `- AC-<n>:` lines under `## Acceptance Criteria` of `00` (trailing white space removed, `cksum`) and a difference is `STOP reason=conflicting-artifacts` with a `CHECK: FAIL 00_request.md:0` line (a unit without the line is not checked). With `--save-before` and a `CONTINUE` verdict, it writes the copy (Interface).
 2. With `--report` and `--step` (after a dispatch): normalizes the STATUS (9.1, including the role check), then the bookkeeping check: the step's `Result` and the status-row cells equal the 9.2 mapping for that STATUS and `Last update` names the step (rules 4 and 5); with `--before`, only the current step's route row and the status row differ from the copy, the `- Used:` line not counted (24 AI-26 check 2). For an `app-developer` `DONE`, its new `03` section has a `### Gate output` fence whose first line starts with `$ ` (AI-26 check 1). For a `qc` step (run after the `project-manager` transcription call), the `Criterion` and `Result` cells of the new `04` section's `### Verification` rows equal those of the saved report, and its STATUS equals the normalized one (AI-21). Then it prints the verdict for what follows.
 
 **What `check-format` checks** (first release, J5): directory name (1(d), only directories with `00_request.md`, plus duplicate ticket IDs across `docs/*/00_request.md`), `00` (fence-aware headings, AC lines, `TODO`), `01` (headings, status and route rows, budget arithmetic, T2 only for `Commander`), `04` (headings, send-back counting rule), `05` (headings, `Open:` against `06`, link), `06` (item ids, fields, required blocks per kind, review-flag warning), and the `STATUS:` line at the end of each section (`02`, `03`, `04`, `01 ### qa`, `05`). Route sequence against the section 10 lookup (held as data inside the script). Checks of `02` / `03` content and of the release directory are **specified, implemented later**.
 
-**Tests** (harness: `validate.sh`): fixtures built from the examples of sections 1 to 8 pass `check-format`; one seeded-invalid copy per format fails it with the expected rule; `next` fixtures cover every 9.2 row, the next-step rule after a send-back (3(c)), an aborted attempt, budget, denial cap with two `Denied by guard: yes` items, and the STATUS inputs of 24 A11 as changed in 24 s7.5 (`**STATUS: DONE**`, `` `STATUS: DONE` ``, `STATUS: DONE.`, `STATUS: 完了`, none, two lines, mid-text, `PASS` from `app-developer`: all `BLOCKED`; `status: done` and `STATUS: DONE  ` accepted as `DONE`). `--save-before` (23 Y-3): the copy equals `01` byte for byte (`cmp`) after a `CONTINUE`; no file is written after any other verdict; a relative path or a path inside the fixture repository gives exit `2` and no file; a `--before` copy that differs from `01` only in `- Used:` passes the check. Path rule (23 Y-2): the static check in `validate.sh` finds the helper path in each calling `SKILL.md` exactly in the form of the path-rule table. Integrity tests (N5): `grep -nE '(^|[^a-z_])(eval|source)([^a-z_]|$)|^[[:space:]]*\.[[:space:]]' loop-state.sh` finds nothing (a static check in `validate.sh`; comments excluded); a fixture whose unit files and saved report contain `$(touch marker)`, backticks and `; rm -rf x` text gives a normal verdict and creates no marker file; the edit-guard rows for the helper path are in 21 section 8.6 (24 A10, A23).
+**Tests** (harness: `validate.sh`): `ac-hash` prints a stable number, changes when an AC line is edited, added or removed, ignores other sections and trailing white space, and a changed `00` after the hash was recorded gives the stop above; fixtures built from the examples of sections 1 to 8 pass `check-format`; one seeded-invalid copy per format fails it with the expected rule; `next` fixtures cover every 9.2 row, the next-step rule after a send-back (3(c)), an aborted attempt, budget, denial cap with two `Denied by guard: yes` items, and the STATUS inputs of 24 A11 as changed in 24 s7.5 (`**STATUS: DONE**`, `` `STATUS: DONE` ``, `STATUS: DONE.`, `STATUS: 完了`, none, two lines, mid-text, `PASS` from `app-developer`: all `BLOCKED`; `status: done` and `STATUS: DONE  ` accepted as `DONE`). `--save-before` (23 Y-3): the copy equals `01` byte for byte (`cmp`) after a `CONTINUE`; no file is written after any other verdict; a relative path or a path inside the fixture repository gives exit `2` and no file; a `--before` copy that differs from `01` only in `- Used:` passes the check. Path rule (23 Y-2): the static check in `validate.sh` finds the helper path in each calling `SKILL.md` exactly in the form of the path-rule table. Integrity tests (N5): `grep -nE '(^|[^a-z_])(eval|source)([^a-z_]|$)|^[[:space:]]*\.[[:space:]]' loop-state.sh` finds nothing (a static check in `validate.sh`; comments excluded); a fixture whose unit files and saved report contain `$(touch marker)`, backticks and `; rm -rf x` text gives a normal verdict and creates no marker file; the edit-guard rows for the helper path are in 21 section 8.6 (24 A10, A23).
 
 ## 10. Route table
 

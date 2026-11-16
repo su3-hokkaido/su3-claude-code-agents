@@ -399,7 +399,7 @@ ex E34 FT dev Write '/home/u/.claude/plugins/cache/m/su3-developer-set/0.1.0/scr
 ex E35 FT dev Write "@R@/$RD/loop-state.sh" deny:T3-PROTECT
 ex E35 FT dev Write '/tmp/LOOP-STATE.SH' deny:T3-PROTECT
 ex E36 FT dev Write '@R@/plugins/su3-product-owner-set-with-guards/skills/x/SKILL.md' none
-ex E36 FT dev Write '@R@/plugins/su3-developer-set-with-guards/agents/x.md' none
+ex E36 FT dev Write '@R@/plugins/su3-developer-set-with-guards/agents/x.md' deny:T3-PROTECT
 ex E36 FT dev Write '@R@/src/skills/x.ts' none
 ex E36 FT dev Write '@R@/docs/loop-state-notes.md' none
 # E37/E38/E39: unknown role, role case, path spelling

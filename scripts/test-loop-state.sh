@@ -255,6 +255,30 @@ seed "item id not ascending" 06_commander_actions.md 's/^### A-001:/### A-000:/'
 seed "missing field" 06_commander_actions.md '/^- Review flags:/d'
 run check-format "$UNIT"
 expect "fixture restored" "VERDICT: CONTINUE reason=format-ok"
+# ---- ac-hash: acceptance criteria change detection -------------------------------------------------
+H1=$(sh "$HELPER" ac-hash "$UNIT"); case $H1 in ''|*[!0-9]*) fail "ac-hash is not a number: '$H1'" ;; esac
+[ "$(sh "$HELPER" ac-hash "$UNIT")" = "$H1" ] || fail "ac-hash not stable"
+cp "$UNIT/01_project_plan.md" "$OUT/plan.keep"
+# no recorded line: no check (backward compatible)
+run next "$UNIT"; expect "no AC hash line" "VERDICT: CONTINUE"
+# recorded and equal: passes
+awk -v h="$H1" '{ print } /^- Mode:/ { print "- AC hash: " h }' "$OUT/plan.keep" >"$UNIT/01_project_plan.md"
+run check-format "$UNIT"; expect "AC hash line is valid" "VERDICT: CONTINUE reason=format-ok"
+run next "$UNIT"; expect "AC hash unchanged" "VERDICT: CONTINUE"
+# an AC line edited after planning: stop
+cp "$UNIT/00_request.md" "$OUT/req.keep"
+sed -e 's/^- AC-2: .*/- AC-2: Something else entirely./' "$OUT/req.keep" >"$UNIT/00_request.md"
+run next "$UNIT"; expect "AC changed" "VERDICT: STOP reason=conflicting-artifacts"
+case $OUTP in *"acceptance criteria changed after planning"*) ;; *) fail "AC change not named in CHECK line" ;; esac
+# a change outside the AC section does not matter
+sed -e 's/^The login page says "Pasword"\./The login page shows a typo./' "$OUT/req.keep" >"$UNIT/00_request.md"
+run next "$UNIT"; expect "non-AC edit ignored" "VERDICT: CONTINUE"
+cp "$OUT/req.keep" "$UNIT/00_request.md"
+# malformed value
+sed -e 's/^- AC hash:.*/- AC hash: abc/' "$UNIT/01_project_plan.md" >"$OUT/bad.md"; cp "$OUT/bad.md" "$UNIT/01_project_plan.md"
+run check-format "$UNIT"; case $(verdict) in "VERDICT: STOP reason=format-invalid"*) ;; *) fail "bad AC hash value accepted" ;; esac
+cp "$OUT/plan.keep" "$UNIT/01_project_plan.md"
+
 # a snapshot with headings and a fence is not parsed as sections (fence-aware)
 grep -q '## Not a heading' "$UNIT/00_request.md" || fail "fixture lost its fenced heading"
 

@@ -1,12 +1,14 @@
 ---
 name: task-management
-description: Plan one unit of work as a run directory - route, status table, budget, skipped files and quality criteria - with the project manager and QA agents. Use when a request or ticket needs a plan before implementation, or when a unit directory has no plan yet.
+description: Plan one unit of work as a run directory - route, status table, budget, skipped files and quality criteria - with the project manager and QA agents. Use only when project-implementation calls it for a unit or the user asks for it, to plan a request or ticket or a unit directory that has no plan yet.
 argument-hint: <unit directory | description of the work>
 ---
 
 # Task management
 
 Turns one request into `01_project_plan.md` inside a unit directory `docs/<YYYY-MM-DD>_<NNN>_<slug>/`. The formats and the route table are in `${CLAUDE_SKILL_DIR}/../project-implementation/formats.md` (sections 1 to 3 and 10). You run this in the main session.
+
+**Caller check.** If neither the user's current message nor `project-implementation` asked for this skill, stop and say so; do nothing else.
 
 Input: `$ARGUMENTS`.
 
