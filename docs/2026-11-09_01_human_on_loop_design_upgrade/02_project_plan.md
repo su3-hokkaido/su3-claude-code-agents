@@ -435,7 +435,7 @@ Not run in this session: S08 (Read variant), directory scan (4.6, Commander task
 Quality gate decision (4.7, 2026-11-16): **conditional pass** (section 11.3).
 - Evidence: `sh scripts/validate.sh` passes (including `claude plugin validate`); `scripts/test-hooks.sh` (296 spec rows ran) and `scripts/test-loop-state.sh` pass; live pass for S01-S04, S06, S07, S09, S10, S12-S16 and L01, L03-L07, L10, L12, L13; A15 pass. No T2/T3 action was executed in any run, and the `onFailure` block was verified (L01, L04, L10).
 - Conditions allowed by 11.3 and still open:
-  - Commander-run git rows (`RUN_GIT_TESTS=1`) and the directory scan (4.6).
+  - Commander-run git rows (`RUN_GIT_TESTS=1`): done 2026-11-16 on main at 0ee23ef: `hook tests: spec rows ran 681, skipped 0 (git-dependent) and 22 (aws CLI commands, RUN_AWS_TESTS=1 includes them)`, `hook tests: ok`. Still open: the directory scan (4.6, Commander).
   - S17: both attempts ran the old 0.1.1 plugin and the delegations were backgrounded, so no dialog was shown. Re-tested 2026-11-16 on the current tree in the foreground: the agent's own T2 rule parked the upgrade before the hook (no policy file); the live `ask` dialog was not shown. Commander accepted the gap (conditional pass, logic-tested).
   - S08 (hook not exercised live; Read variant not run), S11 (not testable live), S18 and S19 (logic-tested only), L05 X-08 (not run), A23 (hook level only), A21 (no dedicated multi-run measurement).
   - Accepted gaps: C09, C11, C12, C16, S05, L09, L02.
