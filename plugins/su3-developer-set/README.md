@@ -1,6 +1,6 @@
 # su3-developer-set
 
-Subagents and skills for the delivery pipeline. Part of the `su3-hokkaido-ai-ecosystem` marketplace. Version 0.1.0.
+Subagents and skills for the delivery pipeline. Part of the `su3-hokkaido-ai-ecosystem` marketplace. Version 0.3.1.
 
 > **No hooks.** This plugin ships no hook, so it can be listed in Anthropic's directory (which accepts command hooks only from Verified organizations). Nothing blocks a dangerous command automatically: the agents' guardrails are instructions only. For the same agents with a guard hook, install [`su3-developer-set-with-guards`](../su3-developer-set-with-guards/README.md) instead. Do not install both: their commands and agents overlap.
 

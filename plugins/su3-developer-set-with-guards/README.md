@@ -1,6 +1,6 @@
 # su3-developer-set-with-guards
 
-Subagents, skills and a guardrail hook for the delivery pipeline. Part of the `su3-hokkaido-ai-ecosystem` marketplace. Version 0.1.0.
+Subagents, skills and a guardrail hook for the delivery pipeline. Part of the `su3-hokkaido-ai-ecosystem` marketplace. Version 0.3.1.
 
 > **This is the variant with the guard hook.** It is the same set of agents as [`su3-developer-set`](../su3-developer-set/README.md), plus a `PreToolUse` command hook. Anthropic's directory accepts command hooks only from Verified organizations, so this variant is distributed through this GitHub marketplace only. Do not install both variants: their commands and agents overlap.
 
