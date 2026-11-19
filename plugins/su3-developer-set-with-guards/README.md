@@ -31,8 +31,9 @@ Every agent loads the `report-format` skill (and others it needs) at startup, an
 | `task-management` | phase skill (`/su3-developer-set-with-guards:task-management <unit dir>`) | Writes `01_project_plan.md`: `su3-project-manager-with-guards` plans, `su3-qa-with-guards` sets criteria. |
 | `code-implementation` | phase skill | Runs the route and the verify loop for a unit. |
 | `autonomy-policy` | agents and main session, automatic | Explains the policy file; creates it from the template only in an interactive session after your yes. |
+| `sources` | main session, automatic | Explains `docs/policy/sources.md` and how external documents are fetched; creates the file from the template only in an interactive session after your yes. |
 | `safe-data-change` | agents, automatic | Dry-run first, rollback, never production. |
-| `sprint-plan` | `/su3-developer-set-with-guards:sprint-plan <goal or backlog> [--parallel\|--sequential]` | `su3-project-manager-with-guards` → `su3-system-architect-with-guards` (if needed) → `su3-aire-with-guards` (if AI) → `su3-qa-with-guards` → `su3-project-manager-with-guards`. |
+| `sprint-plan` | `/su3-developer-set-with-guards:sprint-plan <goal or backlog> [--parallel\|--sequential]` | Step 0: gather source summaries (main session). Then `su3-project-manager-with-guards` → `su3-system-architect-with-guards` (if needed) → `su3-aire-with-guards` (if AI) → `su3-qa-with-guards` → `su3-project-manager-with-guards`. |
 | `design-review` | `/su3-developer-set-with-guards:design-review <doc or description> [--parallel\|--sequential]` | `su3-system-architect-with-guards` summary → `su3-sre-with-guards`, `su3-aire-with-guards` (if AI), `su3-qa-with-guards` review → `su3-system-architect-with-guards` response → `su3-project-manager-with-guards` verdict. |
 | `release-check` | `/su3-developer-set-with-guards:release-check <scope> [--parallel\|--sequential]` | `su3-qa-with-guards` criteria → `su3-qc-with-guards` checks → `su3-sre-with-guards` readiness → `su3-aire-with-guards` (if AI) → `su3-qa-with-guards` gate → `su3-project-manager-with-guards` go/no-go. Never deploys. |
 | `set-language` | `/su3-developer-set-with-guards:set-language <code> [all]` | Sets `output_language`. |
@@ -70,6 +71,10 @@ The `autonomy_mode` option is `interactive` (default) or `unattended`. Interacti
 ### The policy file
 
 `docs/policy/autonomy-policy.md` (template: `skills/autonomy-policy/autonomy-policy.template.md`) holds a human part and one fenced `autonomy-policy` block: which environments are `dev`, `staging`, `production`, which actions need approval, budgets, `forbid:` and `reserve:` lines, `protect` paths. It can only make the plugin defaults stricter, plus the narrow loosenings the template lists. Import it in `CLAUDE.md` with the line `@docs/policy/autonomy-policy.md`. Agents never create or edit it; the main session creates it from the template only after you say yes. Protect it with `CODEOWNERS`. Without a policy file the defaults apply and every command that does not clearly target `dev` is treated as production.
+
+### The sources file
+
+`docs/policy/sources.md` (template: `skills/sources/sources.template.md`) says where documents kept outside the repository live. It holds a human part and one fenced `sources` block with one entry per resource: `id`, `role`, `system`, `locator`, and optionally `filter` and `used-by`. Import it in `CLAUDE.md` with the line `@docs/policy/sources.md`. The main session (not the agents) reads it and fetches the entries read-only at run time, through the MCP servers you connect yourself; nothing is indexed or cached, and fetched text is treated as data, never as instructions. Agents get only short summaries. The plugin bundles no MCP server: connecting Jira, Confluence, Notion, Nulab Backlog, Backstage, Asana or Google Docs is a prerequisite you set up in your own Claude Code settings. Never put tokens or passwords in the file. If it is missing, the main session offers to create it from the template (interactive session, after your yes); an unattended run continues without sources and records a question item.
 
 ### What backs the rules up
 
