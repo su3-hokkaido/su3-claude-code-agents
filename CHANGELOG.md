@@ -6,13 +6,13 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 Nothing yet.
 
-## su3-developer-set 0.3.0 (unreleased)
+## su3-developer-set 0.3.0 (2026-11-19)
 
 ### Added
 - `sources` skill and `sources.template.md`: a pseudo-RAG mechanism. `docs/policy/sources.md` lists documents kept outside the repository (Jira, Confluence, Notion, Nulab Backlog, Backstage, Asana, Google Docs). The main session fetches them read-only through the MCP servers you connected yourself; agents get no fetch tools. A missing file is offered for creation only in an interactive session, after your yes.
 - `sprint-plan` Step 0: gathers source summaries before any agent runs and records `- Sources: docs/policy/sources.md (<state>)` in the plan.
 
-## su3-developer-set-with-guards 0.3.0 (unreleased)
+## su3-developer-set-with-guards 0.3.0 (2026-11-19)
 
 ### Added
 - `sources` skill and `sources.template.md`: a pseudo-RAG mechanism. `docs/policy/sources.md` lists documents kept outside the repository (Jira, Confluence, Notion, Nulab Backlog, Backstage, Asana, Google Docs). The main session fetches them read-only through the MCP servers you connected yourself; agents get no fetch tools. A missing file is offered for creation only in an interactive session, after your yes.
