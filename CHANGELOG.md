@@ -6,6 +6,26 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 Nothing yet.
 
+## su3-product-owner-set 0.2.0 (2026-11-19)
+
+### Added
+- `sources` skill and `sources.template.md`: the same pseudo-RAG mechanism as in the developer sets, in pointer style (there is no `sprint-plan` here). `docs/policy/sources.md` lists documents kept outside the repository. The main session fetches them read-only through the MCP servers you connected yourself and hands short summaries to the agents. Fetched content is never written into `docs/product/` or `docs/backlog/` without a `product-adr` record first.
+
+## su3-product-owner-set-with-guards 0.2.0 (2026-11-19)
+
+### Added
+- `sources` skill and `sources.template.md`: the same pseudo-RAG mechanism as in the developer sets, in pointer style (there is no `sprint-plan` here). `docs/policy/sources.md` lists documents kept outside the repository. The main session fetches them read-only through the MCP servers you connected yourself and hands short summaries to the agents. Fetched content is never written into `docs/product/` or `docs/backlog/` without a `product-adr` record first.
+
+## su3-developer-set 0.3.1 (2026-11-19)
+
+### Changed
+- `task-management`, `code-implementation`, `design-review`, `release-check` and `project-implementation` now point to the `sources` skill. They do not fetch on their own.
+
+## su3-developer-set-with-guards 0.3.1 (2026-11-19)
+
+### Changed
+- `task-management`, `code-implementation`, `design-review`, `release-check` and `project-implementation` now point to the `sources` skill. They do not fetch on their own.
+
 ## su3-developer-set 0.3.0 (2026-11-19)
 
 ### Added

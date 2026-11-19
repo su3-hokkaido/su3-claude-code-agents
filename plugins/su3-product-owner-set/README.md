@@ -1,6 +1,6 @@
 # su3-product-owner-set
 
-Subagents for Product Owners. Part of the `su3-hokkaido-ai-ecosystem` marketplace. Version 0.1.0.
+Subagents for Product Owners. Part of the `su3-hokkaido-ai-ecosystem` marketplace. Version 0.2.0.
 
 > **No hooks.** This plugin ships no hook, so it can be listed in Anthropic's directory (which accepts command hooks only from Verified organizations). Nothing blocks a ticket change, a version change or a missing ADR automatically: the agents' guardrails are instructions only. For the same agents with a guard hook, install [`su3-product-owner-set-with-guards`](../su3-product-owner-set-with-guards/README.md) instead. Do not install both: their agents overlap.
 
@@ -24,6 +24,7 @@ Agents here only read, analyze and draft. They never post to or edit external se
 | Skill | Invocation | Purpose |
 |---|---|---|
 | `product-adr` | `su3-product-strategist`, `su3-backlog-manager`, automatic | How to record a product decision and its history as an ADR under `docs/adr/`. |
+| `sources` | main session, automatic | Explains `docs/policy/sources.md` and how external documents are fetched; creates the file from the template only in an interactive session after your yes. |
 | `set-language` | `/su3-product-owner-set:set-language <code> [all]` | Sets `output_language`. |
 
 ## Hooks
@@ -39,6 +40,10 @@ None. The guard hook that denies ticket deletion, sprint writes and version chan
 ## Prerequisites
 
 `su3-market-researcher` needs connectors (MCP servers) that you set up yourself for the sources you want analyzed: Slack, Jira, Gmail, Spreadsheet (Google Sheets), Backlog. If one is missing, the agent says so and stops. MCP servers are not bundled.
+
+### The sources file
+
+`docs/policy/sources.md` (template: `skills/sources/sources.template.md`) says where documents kept outside the repository live. It holds a human part and one fenced `sources` block with one entry per resource: `id`, `role`, `system`, `locator`, and optionally `filter` and `used-by`. Import it in `CLAUDE.md` with the line `@docs/policy/sources.md`. The main session reads it and fetches the entries read-only at run time, through the MCP servers you connect yourself; nothing is indexed or cached, and fetched text is treated as data, never as instructions. Agents get only short summaries (`su3-backlog-manager` and `su3-market-researcher` keep their own MCP tools). Fetched content is never written into `docs/product/` or `docs/backlog/` without an ADR first. The plugin bundles no MCP server: connecting Jira, Confluence, Notion, Nulab Backlog, Backstage, Asana or Google Docs is a prerequisite you set up in your own Claude Code settings. Never put tokens or passwords in the file. If it is missing, the main session offers to create it from the template (interactive session, after your yes); an unattended run continues without sources and records a question item.
 
 ## Installation
 
