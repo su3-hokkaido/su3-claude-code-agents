@@ -1,6 +1,6 @@
 {
   "name": "su3-product-owner-set-with-guards",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Subagents for Product Owners: strategy, market research, security maintenance, UI/UX, prototyping and backlog management With guard hooks.",
   "author": {
     "name": "su3-hokkaido"

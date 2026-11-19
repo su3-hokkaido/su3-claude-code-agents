@@ -1,8 +1,8 @@
 # 01. Sources file (pseudo-RAG) design
 
 - Date: 2026-11-17
-- Status: Decided by the Commander (file path, retrieval owner, first scope); implemented in 0.3.0 of the two developer-set plugins
-- Applies to: `su3-developer-set` and `su3-developer-set-with-guards`. The product-owner pair follows later.
+- Status: Decided by the Commander (file path, retrieval owner, first scope); implemented in 0.3.0 of the two developer-set plugins; the product-owner pair got a pointer-style `sources` skill in 0.2.0
+- Applies to: `su3-developer-set` and `su3-developer-set-with-guards` (0.3.0), then `su3-product-owner-set` and `su3-product-owner-set-with-guards` (0.2.0).
 
 ## 1. Problem
 
@@ -62,10 +62,12 @@ The file holds locations only. It never holds tokens, passwords or API keys.
 
 - New skill `sources` (SKILL.md plus `sources.template.md`), byte-identical template in both plugins.
 - `sprint-plan` gets "Step 0: source gathering".
-- `task-management` and the phase skills only point to `sources`; they do not fetch on their own in this release.
+- `task-management` and the phase skills only point to `sources`; they do not fetch on their own. The pointers were added in 0.3.1 of the developer pair.
 - `validate.sh` section 7c already checks byte-identity of non-SKILL.md files under `skills/`; the new template is covered. A check that the template's block parses is added.
 - READMEs list MCP servers as prerequisites only.
 
 ## 7. Out of scope
 
-Vector indexing, caching, writing back to the sources, bundled MCP servers, the product-owner pair.
+Vector indexing, caching, writing back to the sources, bundled MCP servers.
+
+The product-owner pair (0.2.0) has a pointer-style `sources` skill. The PO agents `su3-backlog-manager` and `su3-market-researcher` already carry their own MCP tools, so the skill adds none. Fetched content is never written into `docs/product/` or `docs/backlog/` without a `product-adr` record first.

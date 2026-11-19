@@ -1,6 +1,6 @@
 {
   "name": "su3-developer-set-with-guards",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Subagents for the delivery pipeline: project management, architecture, development, SRE, AI reliability, QC and QA With guard hooks.",
   "author": {
     "name": "su3-hokkaido"

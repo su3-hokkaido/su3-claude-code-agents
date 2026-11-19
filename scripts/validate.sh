@@ -11,6 +11,9 @@
 #   6b. Versions: SemVer in plugin.json only, with a matching CHANGELOG heading
 #   7. Repository rules (no commands/ directory, no shared/ directory)
 #   7b. Hook scripts: syntax and scripts/test-hooks.sh
+#   6c. Phase skills: flags, helper path form, STATUS rule
+#   7c. Autonomy: loop-state helper and its tests
+#   7d. sources.template.md: exactly one `sources` block that parses
 #   8. `claude plugin validate`, when the claude CLI is available
 #
 # Requires: sh, jq, awk. POSIX sh; works on macOS and Linux.
@@ -539,6 +542,49 @@ done
 if [ -f scripts/test-loop-state.sh ]; then
   sh scripts/test-loop-state.sh || err "loop-state helper tests failed"
 fi
+
+# --- 7d. sources template: the `sources` block parses ------------------------------
+
+info "== sources templates"
+check_sources_block() {
+  awk '
+    function flush() {
+      if (!inent) return
+      if (cur_id !~ /^[a-z0-9-]+$/) msg = msg "entry at line " cur_line ": bad or missing id; "
+      else if (cur_id in seen) msg = msg "entry at line " cur_line ": duplicate id " cur_id "; "
+      seen[cur_id] = 1
+      if (!r) msg = msg "entry " cur_id ": missing role; "
+      if (!s) msg = msg "entry " cur_id ": missing system; "
+      if (!l) msg = msg "entry " cur_id ": missing locator; "
+      inent = 0; r = 0; s = 0; l = 0; entries++
+    }
+    /^```sources[[:space:]]*$/ { blocks++; inblk = 1; next }
+    inblk && /^```/ { flush(); inblk = 0; next }
+    !inblk { next }
+    /^[[:space:]]*#/ || /^[[:space:]]*$/ { next }
+    /^version:[[:space:]]*1[[:space:]]*$/ { ver = 1; next }
+    /^-[[:space:]]+id:/ {
+      flush(); inent = 1; cur_line = NR
+      v = $0; sub(/^-[[:space:]]+id:[[:space:]]*/, "", v); sub(/[[:space:]]+$/, "", v); cur_id = v
+      next
+    }
+    inent && /^[[:space:]]+role:[[:space:]]*[^[:space:]]/ { r = 1; next }
+    inent && /^[[:space:]]+system:[[:space:]]*[^[:space:]]/ { s = 1; next }
+    inent && /^[[:space:]]+locator:[[:space:]]*[^[:space:]]/ { l = 1; next }
+    inent && /^[[:space:]]+(filter|used-by):/ { next }
+    { msg = msg "unexpected line " NR ": " $0 "; " }
+    END {
+      if (blocks != 1) msg = msg "expected exactly one sources block, found " blocks + 0 "; "
+      if (!ver) msg = msg "missing version: 1; "
+      print msg
+    }
+  ' "$1"
+}
+for f in plugins/*/skills/sources/sources.template.md; do
+  [ -f "$f" ] || continue
+  msg=$(check_sources_block "$f")
+  if [ -n "$msg" ]; then err "$f: $msg"; fi
+done
 
 # --- 8. official validator --------------------------------------------------
 
